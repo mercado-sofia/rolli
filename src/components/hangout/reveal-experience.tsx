@@ -99,16 +99,20 @@ export function RevealExperience({
     const { data, error } = await getRevealState(hangoutId, sessionToken);
     if (error || !data) return;
 
-    const signed = await signRevealPhotoUrls(data.perspectives);
-    setPerspectives(signed);
-    setSignedAt(Date.now());
-    if (data.readyProgress) {
-      setReadyProgress(data.readyProgress);
+    try {
+      const signed = await signRevealPhotoUrls(data.perspectives);
+      setPerspectives(signed);
+      setSignedAt(Date.now());
+      if (data.readyProgress) {
+        setReadyProgress(data.readyProgress);
+      }
+      syncSessionFromRevealState({
+        hangout: data.hangout,
+        participant: data.participant,
+      });
+    } catch {
+      setLoadError("Could not refresh reveal photos");
     }
-    syncSessionFromRevealState({
-      hangout: data.hangout,
-      participant: data.participant,
-    });
   }, [hangoutId, sessionToken, syncSessionFromRevealState]);
 
   useResignPhotosOnVisibility({
@@ -157,18 +161,30 @@ export function RevealExperience({
         return;
       }
 
-      const signed = await signRevealPhotoUrls(data.perspectives);
-      if (cancelled) return;
+      try {
+        const signed = await signRevealPhotoUrls(data.perspectives);
+        if (cancelled) return;
 
-      setPerspectives(signed);
-      setCurrentIndex(0);
-      setSignedAt(Date.now());
-      setReadyProgress(data.readyProgress ?? null);
-      syncSessionFromRevealState({
-        hangout: data.hangout,
-        participant: data.participant,
-      });
-      setLoading(false);
+        setPerspectives(signed);
+        setCurrentIndex(0);
+        setSignedAt(Date.now());
+        setReadyProgress(data.readyProgress ?? null);
+        syncSessionFromRevealState({
+          hangout: data.hangout,
+          participant: data.participant,
+        });
+      } catch {
+        if (cancelled) return;
+        setPerspectives([]);
+        setCurrentIndex(0);
+        setSignedAt(null);
+        setReadyProgress(null);
+        setLoadError("Could not load reveal photos");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
 
     void load();

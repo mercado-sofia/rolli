@@ -43,7 +43,6 @@ export function useHangoutSync({ slug, enabled = true }: UseHangoutSyncOptions) 
 
     let cancelled = false;
     let pollIntervalId: number | undefined;
-    let removeChannel: (() => void) | undefined;
 
     function applyHangout(data: Hangout) {
       if (cancelled) return;
@@ -53,7 +52,7 @@ export function useHangoutSync({ slug, enabled = true }: UseHangoutSyncOptions) 
 
       setLocalHangout(merged);
       if (participant && participant.hangoutId === data.id) {
-        setHangout(merged);
+        setHangout(data);
       }
       setLoadError(null);
       setIsLoading(false);
@@ -83,37 +82,60 @@ export function useHangoutSync({ slug, enabled = true }: UseHangoutSyncOptions) 
       const initial = await load();
       if (cancelled) return;
 
+      if (!initial) return;
+
       pollIntervalId = window.setInterval(() => {
         void load();
       }, POLL_MS);
 
-      if (!initial) return;
+      if (cancelled) {
+        window.clearInterval(pollIntervalId);
+        pollIntervalId = undefined;
+        return;
+      }
 
       const supabase = createClient();
-      const channel = supabase
-        .channel(`hangout-status:${initial.id}`)
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "hangouts",
-            filter: `id=eq.${initial.id}`,
-          },
-          (payload) => {
-            const row = payload.new as HangoutRowJson;
-            if (row.slug !== slug) return;
-            applyHangout(mapHangout(row));
-          },
-        )
-        .subscribe();
+      const channel = supabase.channel(`hangout-status:${initial.id}`).on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "hangouts",
+          filter: `id=eq.${initial.id}`,
+        },
+        (payload) => {
+          const row = payload.new as HangoutRowJson;
+          if (row.slug !== slug) return;
+          applyHangout(mapHangout(row));
+        },
+      );
 
-      removeChannel = () => {
+      const removeChannel = () => {
         void supabase.removeChannel(channel);
       };
+
+      if (cancelled) {
+        removeChannel();
+        return;
+      }
+
+      channel.subscribe();
+
+      return removeChannel;
     }
 
-    void setup();
+    let removeChannel: (() => void) | undefined;
+
+    void setup().then((cleanup) => {
+      if (cancelled) {
+        cleanup?.();
+        if (pollIntervalId !== undefined) {
+          window.clearInterval(pollIntervalId);
+        }
+        return;
+      }
+      removeChannel = cleanup;
+    });
 
     return () => {
       cancelled = true;
@@ -124,5 +146,10 @@ export function useHangoutSync({ slug, enabled = true }: UseHangoutSyncOptions) 
     };
   }, [enabled, reloadKey, setHangout, slug]);
 
-  return { hangout: syncedHangout, loadError, isLoading, retry };
+  return {
+    hangout: syncedHangout,
+    loadError,
+    isLoading: enabled ? isLoading || (hangout === null && loadError === null) : false,
+    retry,
+  };
 }

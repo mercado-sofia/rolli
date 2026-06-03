@@ -76,9 +76,11 @@ export function AppSelect({
         ? selectedIndex
         : enabledIndices[0] ?? -1;
 
-    if (initialIndex >= 0) {
-      focusOptionAt(initialIndex);
-    }
+    const focusFrameId = window.requestAnimationFrame(() => {
+      if (initialIndex >= 0) {
+        focusOptionAt(initialIndex);
+      }
+    });
 
     function handlePointerDown(event: MouseEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
@@ -95,6 +97,7 @@ export function AppSelect({
     document.addEventListener("mousedown", handlePointerDown);
     document.addEventListener("keydown", handleKeyDown);
     return () => {
+      window.cancelAnimationFrame(focusFrameId);
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };

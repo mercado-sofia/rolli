@@ -100,7 +100,7 @@ export default function SessionPage() {
   const [abandonUiState, setAbandonUiState] = useState<AbandonHangoutUiState>("idle");
   const menuLayerRef = useRef<HangoutMenuLayerHandle>(null);
 
-  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout(slug);
+  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
   const isCancelled = displayHangout?.status === "cancelled";
   const pauseGuards = abandonUiState !== "idle";
   const guardIsLoading = isLoading || pauseGuards;

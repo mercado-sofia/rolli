@@ -53,7 +53,7 @@ export default function GalleryPage() {
 
   const sessionHydrated = useSessionHydrated();
   const storeParticipant = useSessionStore((state) => state.participant);
-  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout(slug);
+  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
   const [galleryLoading, setGalleryLoading] = useState(true);
   const [galleryLoadingHangoutId, setGalleryLoadingHangoutId] = useState<
     string | null

@@ -71,7 +71,7 @@ export default function GuessingPage() {
 
   const setHangout = useSessionStore((state) => state.setHangout);
   const storeParticipant = useSessionStore((state) => state.participant);
-  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout(slug);
+  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
   const [footer, setFooter] = useState<SetupFlowFooterState>({});
   const menuLayerRef = useRef<HangoutMenuLayerHandle>(null);
 
@@ -90,6 +90,11 @@ export default function GuessingPage() {
   const gateBinding = useHangoutGateBinding(slug, displayHangout, storeParticipant);
 
   const openMemoryGallery = useCallback(async () => {
+    if (displayHangout?.status === "completed") {
+      router.push(hangoutGalleryPath(slug));
+      return;
+    }
+
     if (displayHangout?.status === "guessing" && participant) {
       const { data, error } = await finishGuessing(
         displayHangout.id,
@@ -98,15 +103,18 @@ export default function GuessingPage() {
 
       if (data) {
         setHangout(data);
-      } else if (error?.includes("not in the guessing phase")) {
+        router.push(hangoutGalleryPath(slug));
+        return;
+      }
+
+      if (error?.includes("not in the guessing phase")) {
         const { data: refreshed } = await fetchHangoutBySlug(slug);
-        if (refreshed) {
+        if (refreshed?.status === "completed") {
           setHangout(refreshed);
+          router.push(hangoutGalleryPath(slug));
         }
       }
     }
-
-    router.push(hangoutGalleryPath(slug));
   }, [displayHangout, participant, router, setHangout, slug]);
 
   const participantReadyForGuessing = isParticipantReadyForGuessing(participant);

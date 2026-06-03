@@ -27,7 +27,12 @@ export function useHangoutSessionGuard({
   const kickedFromSlug = useSessionStore((state) => state.kickedFromSlug);
 
   useEffect(() => {
-    if (!sessionHydrated || isLoading || leavingApp || kickedFromSlug === slug) {
+    if (!sessionHydrated || isLoading || leavingApp) {
+      return;
+    }
+
+    if (kickedFromSlug === slug) {
+      router.replace(`/h/${slug}`);
       return;
     }
 
@@ -48,6 +53,7 @@ export function useHangoutSessionGuard({
 
   const hasValidSession =
     sessionHydrated &&
+    kickedFromSlug !== slug &&
     isHangoutSessionValid(slug, hangout, participant, sessionHangout);
 
   return {

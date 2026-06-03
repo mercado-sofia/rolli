@@ -66,15 +66,6 @@ export function GuessingExperience({
   >(null);
   const onHangoutCompletedRef = useRef(onHangoutCompleted);
   const photosResetKey = `${hangoutId}:${reloadKey}`;
-  const [trackedPhotosResetKey, setTrackedPhotosResetKey] = useState(photosResetKey);
-
-  if (trackedPhotosResetKey !== photosResetKey) {
-    setTrackedPhotosResetKey(photosResetKey);
-    setLoadedPerspectivePhotosKey(null);
-    setPerspectivePhotos([]);
-    setPhotosLoadError(null);
-    setPhotosLoading(false);
-  }
 
   useEffect(() => {
     onHangoutCompletedRef.current = onHangoutCompleted;
@@ -171,6 +162,10 @@ export function GuessingExperience({
 
         setLoadedPerspectivePhotosKey(photosResetKey);
         setPerspectivePhotos(signed);
+      } catch {
+        if (cancelled) return;
+        setPerspectivePhotos([]);
+        setPhotosLoadError("Could not load photos");
       } finally {
         if (!cancelled) {
           setPhotosLoading(false);
@@ -194,13 +189,13 @@ export function GuessingExperience({
   ]);
 
   const galleryPhotos = useMemo(() => {
-    if (!galleryTarget) return [];
+    if (!galleryTarget || loadedPerspectivePhotosKey !== photosResetKey) return [];
     return (
       perspectivePhotos.find(
         (perspective) => perspective.participantId === galleryTarget.participantId,
       )?.photos ?? []
     );
-  }, [galleryTarget, perspectivePhotos]);
+  }, [galleryTarget, loadedPerspectivePhotosKey, perspectivePhotos, photosResetKey]);
 
   useEffect(() => {
     if (isCompleted || !canAccessGuessing) {
@@ -314,14 +309,6 @@ export function GuessingExperience({
   useEffect(() => {
     if (!onFooterChange || loading || loadError) {
       onFooterChange?.({});
-      return;
-    }
-
-    if (isCompleted && loadError) {
-      onFooterChange({
-        hint: "Results are not ready yet. Try refreshing this page.",
-        showGalleryButton: true,
-      });
       return;
     }
 

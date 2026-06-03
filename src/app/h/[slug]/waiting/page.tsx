@@ -61,7 +61,7 @@ export default function WaitingRoomPage() {
   const [startError, setStartError] = useState<string | null>(null);
   const [abandonUiState, setAbandonUiState] = useState<AbandonHangoutUiState>("idle");
 
-  const { displayHangout, loadError, isLoading, retry } = useDisplayHangout(slug);
+  const { displayHangout, loadError, isLoading, retry } = useDisplayHangout();
   const isCancelled = displayHangout?.status === "cancelled";
   const pauseGuards = abandonUiState !== "idle";
   const guardIsLoading = isLoading || pauseGuards;

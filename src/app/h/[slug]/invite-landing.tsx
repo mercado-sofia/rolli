@@ -75,6 +75,7 @@ export function InviteLanding() {
   const setSession = useSessionStore((state) => state.setSession);
   const resetSession = useSessionStore((state) => state.resetSession);
   const leaveForHome = useSessionStore((state) => state.leaveForHome);
+  const kickedFromSlug = useSessionStore((state) => state.kickedFromSlug);
   const sessionHydrated = useSessionHydrated();
 
   const [hangout, setHangout] = useState<Hangout | null>(null);
@@ -292,7 +293,7 @@ export function InviteLanding() {
     router.replace(hangoutParticipantPath(slug, hangout.status));
   }, [canEnterHangout, hangout, router, slug]);
 
-  if (removedByKeeper && hangout) {
+  if ((removedByKeeper || kickedFromSlug === slug) && hangout) {
     return (
       <HangoutKickedOut
         title={hangout.title}

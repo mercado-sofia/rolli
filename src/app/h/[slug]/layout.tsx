@@ -3,18 +3,17 @@
 import { useParams } from "next/navigation";
 
 import { RevealAmbientAudio } from "@/components/hangout/reveal-ambient-audio";
-import { useDisplayHangout } from "@/hooks/use-display-hangout";
+import {
+  HangoutDisplayProvider,
+  useDisplayHangout,
+} from "@/contexts/hangout-display-context";
 import { useInHangoutSession } from "@/hooks/use-in-hangout-session";
 import { shouldPlayRevealAmbientMusic } from "@/lib/hangout/reveal-audio";
 
-export default function HangoutSlugLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function HangoutSlugLayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
-  const { displayHangout } = useDisplayHangout(slug);
+  const { displayHangout } = useDisplayHangout();
   const inHangoutSession = useInHangoutSession(slug);
 
   const status = displayHangout?.status;
@@ -30,5 +29,20 @@ export default function HangoutSlugLayout({
       />
       {children}
     </>
+  );
+}
+
+export default function HangoutSlugLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const params = useParams<{ slug: string }>();
+  const slug = params.slug;
+
+  return (
+    <HangoutDisplayProvider slug={slug}>
+      <HangoutSlugLayoutContent>{children}</HangoutSlugLayoutContent>
+    </HangoutDisplayProvider>
   );
 }

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { mergeHangoutUpdate } from "@/lib/hangout/hangout-sync";
 import type { Hangout } from "@/types/hangout";
 import type { Participant } from "@/types/participant";
 
@@ -31,7 +32,13 @@ export const useSessionStore = create<SessionState>()(
       leavingApp: false,
       setSession: (hangout, participant) =>
         set({ hangout, participant, kickedFromSlug: null, leavingApp: false }),
-      setHangout: (hangout) => set({ hangout }),
+      setHangout: (hangout) =>
+        set((state) => ({
+          hangout:
+            hangout && state.hangout
+              ? mergeHangoutUpdate(state.hangout, hangout)
+              : hangout,
+        })),
       setParticipant: (participant) => set({ participant }),
       resetSession: () =>
         set({

@@ -27,7 +27,7 @@ export default function HangoutSharePage() {
   const router = useRouter();
   const slug = params.slug;
 
-  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout(slug);
+  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
 
   useHangoutRouteGuard({ slug, hangout: displayHangout, isLoading });
   const { hasValidSession } = useHangoutSessionGuard({

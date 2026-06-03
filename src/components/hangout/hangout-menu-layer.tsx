@@ -43,7 +43,7 @@ export const HangoutMenuLayer = forwardRef<HangoutMenuLayerHandle, HangoutMenuLa
     const roster = useHangoutRoster({
       hangoutId,
       sessionToken,
-      enabled: rosterEnabled,
+      enabled: rosterEnabled && menuOpen,
     });
 
     const open = useCallback(() => {

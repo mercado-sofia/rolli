@@ -74,7 +74,7 @@ export function ConfirmDialog({
         "inset-x-0 bottom-0 top-auto max-h-[min(92dvh,100dvh)]",
         "backdrop:bg-black/50",
         "md:inset-auto md:bottom-auto md:left-1/2 md:top-1/2 md:max-h-none",
-        "md:w-[min(100vw-2rem,22rem)] md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2",
+        "md:min-w-0 md:w-[min(100vw-2rem,22rem)] md:max-w-md md:-translate-x-1/2 md:-translate-y-1/2",
       )}
       onClose={() => {
         if (!dismissible || !onCancel) return;
@@ -97,7 +97,7 @@ export function ConfirmDialog({
       <div
         className={cn(
           APP_CONTAINER_CLASS,
-          "flex max-h-[min(92dvh,100dvh)] flex-col overflow-hidden",
+          "flex w-full min-w-0 max-h-[min(92dvh,100dvh)] flex-col overflow-hidden",
           "rounded-t-[1.75rem] rounded-b-none md:rounded-3xl",
           "px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] md:px-6 md:py-6",
         )}
@@ -107,19 +107,19 @@ export function ConfirmDialog({
           aria-hidden
         />
 
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">
+        <div className="min-h-0 min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain">
           {icon ? <div className="mb-4 flex justify-center">{icon}</div> : null}
-          <h2 className="text-center font-display text-xl leading-snug text-ink sm:text-[1.35rem]">
+          <h2 className="min-w-0 wrap-break-word text-center font-display text-xl leading-snug text-ink text-pretty sm:text-[1.35rem]">
             {title}
           </h2>
-          <div className="mt-3 text-center text-base leading-relaxed text-muted sm:text-sm">
+          <div className="mt-3 min-w-0 max-w-full wrap-break-word text-center text-base leading-relaxed text-muted text-pretty sm:text-sm">
             {description}
           </div>
 
           {error ? (
             <p
               className={cn(
-                "mt-4 text-center text-base sm:text-sm",
+                "mt-4 min-w-0 wrap-break-word text-center text-base text-pretty sm:text-sm",
                 accent === "ink" ? "text-ink" : "text-pink",
               )}
             >

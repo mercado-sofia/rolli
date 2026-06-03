@@ -48,7 +48,7 @@ export default function RevealPage() {
     {},
   );
 
-  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout(slug);
+  const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
 
   useHangoutRouteGuard({ slug, hangout: displayHangout, isLoading });
   const { participant, hasValidSession } = useHangoutSessionGuard({

@@ -27,7 +27,7 @@ export async function signPhotoPerspectives(
             .createSignedUrl(photo.storagePath, SIGNED_URL_TTL_SEC);
 
           if (error || !data?.signedUrl) {
-            return photo;
+            throw new Error(error?.message ?? "Could not sign photo URL");
           }
 
           const next = { ...photo, signedUrl: data.signedUrl };

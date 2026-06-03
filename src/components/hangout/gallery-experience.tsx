@@ -53,9 +53,13 @@ export function GalleryExperience({
     const { data, error } = await getGallery(hangoutId, sessionToken);
     if (error || !data) return;
 
-    const signed = await signGalleryPhotoUrls(data.perspectives);
-    setPerspectives(signed);
-    setSignedAt(Date.now());
+    try {
+      const signed = await signGalleryPhotoUrls(data.perspectives);
+      setPerspectives(signed);
+      setSignedAt(Date.now());
+    } catch {
+      setLoadError("Could not refresh gallery photos");
+    }
   }, [hangoutId, sessionToken]);
 
   useResignPhotosOnVisibility({
@@ -86,12 +90,22 @@ export function GalleryExperience({
         return;
       }
 
-      const signed = await signGalleryPhotoUrls(data.perspectives);
-      if (cancelled) return;
+      try {
+        const signed = await signGalleryPhotoUrls(data.perspectives);
+        if (cancelled) return;
 
-      setPerspectives(signed);
-      setSignedAt(Date.now());
-      setLoading(false);
+        setPerspectives(signed);
+        setSignedAt(Date.now());
+      } catch {
+        if (cancelled) return;
+        setPerspectives([]);
+        setSignedAt(null);
+        setLoadError("Could not load gallery photos");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
     }
 
     void load();
