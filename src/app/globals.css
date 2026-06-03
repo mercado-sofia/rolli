@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f9f9f9;
+  --foreground: #1a1a1a;
+  --ink: #1a1a1a;
+  --canvas: #f9f9f9;
+  --lavender: #ede8f5;
+  --lavender-deep: #b993d6;
+  --pink: #fbc2eb;
+  --pink-highlight: #fba2c2;
+  --pink-highlight-dark: #e78cad;
+  --pink-highlight-light: #ffc8dc;
+  --pink-accent: #7d1348;
+  --pink-muted: #c4a9b5;
+  --pink-deep: #5c1036;
+  --muted: #8e8e93;
+  --gradient-start: #b993d6;
+  --gradient-end: #fbc2eb;
+  --navbar-height: 3.5rem;
+  --navbar-total-height: calc(var(--navbar-height) + env(safe-area-inset-top, 0px));
+  --container-border: #ffedf5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-canvas: var(--canvas);
+  --color-lavender: var(--lavender);
+  --color-lavender-deep: var(--lavender-deep);
+  --color-pink: var(--pink);
+  --color-pink-highlight: var(--pink-highlight);
+  --color-pink-accent: var(--pink-accent);
+  --color-pink-muted: var(--pink-muted);
+  --color-pink-deep: var(--pink-deep);
+  --color-muted: var(--muted);
+  --color-container-border: var(--container-border);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-sans);
+  --shadow-soft: 0 24px 48px rgba(26, 26, 26, 0.06);
+  --shadow-glow: 0 16px 40px rgba(185, 147, 214, 0.28);
+  --shadow-navbar: 0 10px 48px 4px rgba(253, 236, 246, 0.7),
+    0 4px 36px 3px rgba(251, 194, 235, 0.18);
+  --tracking-overline: 0.14em;
+  --background-image-gradient-pastel: linear-gradient(
+    135deg,
+    var(--gradient-start) 0%,
+    var(--gradient-end) 100%
+  );
+  --background-image-gradient-pink-highlight: linear-gradient(
+    135deg,
+    var(--pink-highlight-dark) 0%,
+    var(--pink-highlight-light) 100%
+  );
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-30%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes reveal-countdown-tick {
+  0% {
+    opacity: 0;
+    transform: scale(0.45);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  75% {
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.reveal-countdown-digit {
+  animation: reveal-countdown-tick 0.75s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+  text-shadow: 0 0 48px rgb(251 162 194 / 45%);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--navbar-total-height);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* iOS Safari auto-zooms focused inputs below 16px — keep form controls at least 16px */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+/* No focus outline on buttons and navigation links */
+a,
+button {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus,
+a:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: none;
+}
+
+.font-display {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Confirm / abandon dialogs: bottom sheet on small screens, centered on md+ */
+.confirm-flow-dialog:modal {
+  max-width: 100%;
+}
+
+.confirm-flow-dialog::backdrop {
+  background: rgb(0 0 0 / 50%);
+}
