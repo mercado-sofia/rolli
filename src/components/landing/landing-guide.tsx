@@ -1,6 +1,6 @@
 "use client";
 
-import { Camera, Film, Moon, Plus } from "lucide-react";
+import { Camera, Film, Minus, Moon, Plus } from "lucide-react";
 import { useState } from "react";
 
 import {
@@ -31,14 +31,12 @@ export function LandingGuide() {
       className={`${LANDING_SECTION_SCROLL_MT} overflow-x-hidden bg-canvas px-5 py-16 md:py-24`}
     >
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 md:gap-14">
-        <LandingReveal className="relative mx-auto max-w-xl overflow-visible text-center md:max-w-2xl">
+        <LandingReveal className="relative mx-auto mb-2 max-w-xl overflow-visible text-center md:max-w-2xl">
           <p className="text-sm font-medium text-muted">Guide for rolli</p>
           <h2 className="font-display mt-2 text-3xl text-ink md:text-4xl">
-            How it works
+            Capture blind,{" "}
+            <span className="text-pink-highlight">reveal</span> together
           </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted md:text-base">
-            Three simple steps before the memories roll in.
-          </p>
         </LandingReveal>
 
         <LandingRevealGroup className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
@@ -56,7 +54,7 @@ export function LandingGuide() {
                       : "border-lavender/50 bg-white"
                   }`}
                 >
-                {/* Plus / X button */}
+                {/* Plus / minus toggle */}
                 <button
                   type="button"
                   aria-label={isActive ? "Close step details" : "Open step details"}
@@ -66,11 +64,15 @@ export function LandingGuide() {
                   }}
                   className={`absolute right-3.5 top-3.5 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-all duration-250 ${
                     isActive
-                      ? "rotate-45 bg-white text-pink-highlight"
+                      ? "bg-white text-pink-highlight"
                       : "bg-lavender/60 text-pink-accent group-hover:bg-pink-highlight group-hover:text-white"
                   }`}
                 >
-                  <Plus className="h-4 w-4 stroke-[2.5]" />
+                  {isActive ? (
+                    <Minus className="h-4 w-4 stroke-[2.5]" />
+                  ) : (
+                    <Plus className="h-4 w-4 stroke-[2.5]" />
+                  )}
                 </button>
 
                 {/* Default face */}
@@ -83,7 +85,7 @@ export function LandingGuide() {
                   <div className="flex flex-1 items-center justify-center">
                     <div className="flex h-22 w-22 items-center justify-center rounded-full bg-pink-highlight/12">
                       <div className="flex h-18 w-18 items-center justify-center rounded-full bg-white">
-                        <Icon className="guide-card-icon h-10 w-10 text-pink-highlight" />
+                        <Icon className="guide-card-icon h-10 w-10 text-pink-highlight transition-colors duration-200 md:text-ink md:group-hover:text-pink-highlight" />
                       </div>
                     </div>
                   </div>

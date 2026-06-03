@@ -44,7 +44,7 @@ export const GUIDE_STEPS = [
   {
     icon: "camera",
     title: "Everyone captures memories anonymously.",
-    heading: "Start your shared roll",
+    heading: "Open the roll",
     description:
       "Invite friends, pick your vibe, and let everyone add moments without overthinking angles or perfect poses.",
     tip: "Focus on candid moments and real reactions.",
@@ -52,7 +52,7 @@ export const GUIDE_STEPS = [
   {
     icon: "film",
     title: "Photos stay hidden until the hangout ends.",
-    heading: "Keep photos hidden during the hangout",
+    heading: "Shots stay sealed",
     description:
       "Every shot stays private while the hangout is active, so people stay present instead of checking the gallery.",
     tip: "No peeking, no pressure. Just enjoy the event.",
@@ -60,7 +60,7 @@ export const GUIDE_STEPS = [
   {
     icon: "moon",
     title: "Every perspective tells a different story.",
-    heading: "Reveal and relive together",
+    heading: "Flip it open together",
     description:
       "When the hangout ends, the full roll appears at once and everyone gets the same surprise reveal experience.",
     tip: "Use the reveal as your group recap moment.",
