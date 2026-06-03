@@ -1,21 +1,19 @@
-# Rolli
+# rolli
 
-**A temporary anonymous disposable camera and social deduction experience for friend groups.**
+**A disposable camera night with your friends — except nobody knows who took what until the hangout's over. Then you guess.**
 
-Rolli is a web-based hangout experience where friends join a shared room, capture photos anonymously using nicknames, and reveal every memory only after the hangout ends. The final twist: guess which real person belongs to each anonymous perspective.
+rolli is a little web hangout where everyone jumps into the same room, snaps photos under silly anonymous nicknames, and keeps every shot locked away until the night ends. When the memories finally develop, the real game begins: who was behind each perspective?
 
 ---
 
-## What is Rolli?
+## So… what is rolli?
 
 During a hangout, everyone contributes photos like a shared disposable camera — but with a catch:
 
-- **Anonymous nicknames** — no one knows who is who during the session
-- **Hidden photos** — captures stay locked until the hangout ends
-- **Delayed reveal** — memories develop cinematically, grouped by perspective
-- **Social deduction** — after the reveal, everyone guesses who owned each nickname
-
-The experience is designed to feel **nostalgic, intimate, cinematic, and playful** — not like social media. No likes, comments, followers, or live galleries.
+- **Anonymous nicknames** — you have no idea who's who while you're shooting
+- **Hidden photos** — your captures stay sealed until the hangout ends
+- **Delayed reveal** — memories develop one perspective at a time, like film coming to life
+- **Social deduction** — once everything's out, everyone guesses which friend owned which nickname
 
 ---
 
@@ -24,7 +22,7 @@ The experience is designed to feel **nostalgic, intimate, cinematic, and playful
 | Flow | Description |
 |------|-------------|
 | **Landing** | Cinematic intro with soft pastel UI |
-| **Quick Guide** | Swipeable slides explaining how Rolli works |
+| **Quick Guide** | Swipeable slides explaining how rolli works |
 | **Create / Join** | Start a hangout or paste an invitation link |
 | **Waiting Room** | Anonymous hold — only participant count is visible |
 | **Share** | Copy or share the invitation link from the waiting room |
@@ -64,4 +62,4 @@ The experience is designed to feel **nostalgic, intimate, cinematic, and playful
 
 ## Design direction
 
-Rolli uses a **soft, pastel, minimalist** aesthetic — glassmorphism, rounded cards, gentle gradients, and cinematic motion. The goal is an emotionally engaging experience that feels temporary and mysterious, not feed-driven.
+rolli leans into a **soft, pastel, minimalist** look — glassy cards, rounded corners, gentle gradients, and motion that feels more like a film roll than a feed. The vibe is temporary and a little mysterious on purpose. You're not building a profile; you're living a moment.
