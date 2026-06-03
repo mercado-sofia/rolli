@@ -44,6 +44,7 @@ export function useGuideDialog(open: boolean, onClose: () => void) {
   }, [onClose]);
 
   useLayoutEffect(() => {
+    openRef.current = open;
     syncDialogOpen(dialogRef.current);
   }, [open, syncDialogOpen]);
 
@@ -133,7 +134,7 @@ type GuideModalShellProps = {
   titleId: string;
   title: string;
   children: ReactNode;
-  footer?: ReactNode;
+  footer?: ReactNode | ((requestClose: () => void) => ReactNode);
   panelClassName?: string;
   /** Horizontal padding for body (and footer). */
   bodyClassName?: string;
@@ -252,7 +253,7 @@ export function GuideModalShell({
                 bodyClassName ?? "px-5 sm:px-6",
               )}
             >
-              {footer}
+              {typeof footer === "function" ? footer(requestClose) : footer}
             </div>
           ) : null}
         </div>
@@ -277,10 +278,14 @@ export function SessionGuideModal({ open, onClose }: SessionGuideModalProps) {
       centerTitle
       titleId="session-guide-title"
       title={content.title}
-      footer={
+      footer={(requestClose) => (
         <button
           type="button"
-          onClick={onClose}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            requestClose();
+          }}
           className={cn(
             "flex h-12 w-full items-center justify-center rounded-2xl text-sm font-semibold",
             "border border-ink bg-ink text-white hover:bg-[#2a2a2a] active:scale-[0.98]",
@@ -288,7 +293,7 @@ export function SessionGuideModal({ open, onClose }: SessionGuideModalProps) {
         >
           {content.primaryLabel}
         </button>
-      }
+      )}
     >
       <GuideBulletList items={content.bullets} />
     </GuideModalShell>
