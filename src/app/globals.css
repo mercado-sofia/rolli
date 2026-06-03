@@ -11,6 +11,7 @@
   --pink-highlight: #fba2c2;
   --pink-highlight-dark: #e78cad;
   --pink-highlight-light: #ffc8dc;
+  --pink-highlight-faint: color-mix(in srgb, var(--pink-highlight) 9%, white);
   --pink-accent: #7d1348;
   --pink-muted: #c4a9b5;
   --pink-deep: #5c1036;
@@ -31,6 +32,8 @@
   --color-lavender-deep: var(--lavender-deep);
   --color-pink: var(--pink);
   --color-pink-highlight: var(--pink-highlight);
+  --color-pink-highlight-light: var(--pink-highlight-light);
+  --color-pink-highlight-faint: var(--pink-highlight-faint);
   --color-pink-accent: var(--pink-accent);
   --color-pink-muted: var(--pink-muted);
   --color-pink-deep: var(--pink-deep);
@@ -53,6 +56,19 @@
     var(--pink-highlight-dark) 0%,
     var(--pink-highlight-light) 100%
   );
+}
+
+@keyframes guide-card-icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.group:hover .guide-card-icon {
+  animation: guide-card-icon-spin 0.65s ease-in-out;
 }
 
 @keyframes shimmer {
