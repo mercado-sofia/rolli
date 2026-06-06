@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { HiOutlineDocumentDownload } from "react-icons/hi";
+import { BiSave } from "react-icons/bi";
+import { TbCashHeart } from "react-icons/tb";
 
 import { GalleryFolderCard } from "@/components/hangout/gallery-folder-card";
 import { Button } from "@/components/ui/button";
@@ -232,7 +233,8 @@ export function GalleryExperience({
   return (
     <div className="space-y-6">
       <Card border="neutral" className="text-center">
-        <p className="text-sm text-muted">
+        <p className="inline-flex items-center justify-center gap-2 text-sm text-muted">
+          <TbCashHeart className="h-4 w-4 shrink-0" aria-hidden />
           {totalPhotos} {totalPhotos === 1 ? "memory" : "memories"} from{" "}
           {perspectives.length}{" "}
           {perspectives.length === 1 ? "perspective" : "perspectives"}
@@ -271,7 +273,7 @@ export function GalleryExperience({
               )
             }
           >
-            <HiOutlineDocumentDownload className="h-4 w-4 shrink-0" aria-hidden />
+            <BiSave className="h-4 w-4 shrink-0" aria-hidden />
             {downloading === "full-album"
               ? "Preparing zip…"
               : "Download full album (zip)"}
@@ -292,7 +294,7 @@ export function GalleryExperience({
                 )
               }
             >
-              <HiOutlineDocumentDownload className="h-4 w-4 shrink-0" aria-hidden />
+              <BiSave className="h-4 w-4 shrink-0" aria-hidden />
               {downloading === `perspective-${selectedPerspective.participantId}`
                 ? "Preparing zip…"
                 : `Download ${selectedPerspective.nickname}'s folder (zip)`}

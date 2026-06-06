@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import { TbCashHeart } from "react-icons/tb";
 import {
   LuCamera,
   LuCake,
@@ -23,7 +24,7 @@ export const LANDING_ICON_CLASS =
 const GUIDE_ICON_MAP: Record<GuideSlideIconKey, IconType> = {
   camera: LuCamera,
   film: LuFilm,
-  moon: LuMoon,
+  cashHeart: TbCashHeart,
 };
 
 const POLAROID_ICON_MAP: Record<PolaroidIconKey, IconType> = {

@@ -58,7 +58,7 @@ export const GUIDE_STEPS = [
     tip: "No peeking, no pressure. Just enjoy the event.",
   },
   {
-    icon: "moon",
+    icon: "cashHeart",
     title: "Every perspective tells a different story.",
     heading: "Flip it open together",
     description:

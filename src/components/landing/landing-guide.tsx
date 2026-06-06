@@ -1,7 +1,8 @@
 "use client";
 
-import { Camera, Film, Minus, Moon, Plus } from "lucide-react";
+import { Camera, Film, Minus, Plus } from "lucide-react";
 import { useState } from "react";
+import { TbCashHeart } from "react-icons/tb";
 
 import {
   LandingReveal,
@@ -13,7 +14,7 @@ import { GUIDE_STEPS, LANDING_SECTION_SCROLL_MT } from "@/lib/constants";
 const STEP_ICONS = {
   camera: Camera,
   film: Film,
-  moon: Moon,
+  cashHeart: TbCashHeart,
 } as const;
 
 type StepIconKey = keyof typeof STEP_ICONS;

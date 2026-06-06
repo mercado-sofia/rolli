@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { TbDoorExit, TbHome } from "react-icons/tb";
+import { BsHousesFill } from "react-icons/bs";
+import { TbDoorExit } from "react-icons/tb";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -34,7 +35,7 @@ export function BackHomeButton({
       className={cn(className)}
       onClick={handleBackHome}
     >
-      <TbHome className="h-4 w-4 shrink-0" aria-hidden />
+      <BsHousesFill className="h-4 w-4 shrink-0" aria-hidden />
       {label}
     </Button>
   );

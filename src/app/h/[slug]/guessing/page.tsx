@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
+import { TbPhotoSquareRounded } from "react-icons/tb";
 
 import {
   BackHomeButton,
@@ -179,6 +180,7 @@ export default function GuessingPage() {
         disabled={navigatingToGallery}
         onClick={openMemoryGallery}
       >
+        <TbPhotoSquareRounded className="h-4 w-4 shrink-0" aria-hidden />
         {navigatingToGallery ? "View memory gallery…" : "View memory gallery"}
       </Button>
       <BackHomeButton className={APP_PRIMARY_BUTTON_CLASS} />
