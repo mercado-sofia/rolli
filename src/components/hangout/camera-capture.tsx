@@ -15,6 +15,7 @@ import { LuCamera } from "react-icons/lu";
 
 import { AppBackButton } from "@/components/ui/app-back-button";
 import {
+  CAMERA_ASPECT_RATIO,
   CAMERA_VIDEO_CONSTRAINTS,
   encodeVideoFrameToJpeg,
 } from "@/lib/hangout/camera-frame";
@@ -423,6 +424,8 @@ export function CameraCapture({
             flash={flash}
             isCapturing={phase === "capturing"}
             isOpening={phase === "opening"}
+            photosTaken={photosTaken}
+            maxPhotos={maxPhotos}
             pendingUploads={pendingUploads}
             zoomPresets={zoomPresets}
             activeZoom={activeZoom}
@@ -557,34 +560,36 @@ function CameraZoomControls({
   if (presets.length === 0) return null;
 
   return (
-    <div
-      role="group"
-      aria-label="Zoom"
-      className="flex flex-wrap items-center justify-center gap-2"
-    >
-      {presets.map((preset) => {
-        const isActive = isZoomPresetActive(activeZoom, preset.value);
+    <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center px-3 md:bottom-4">
+      <div
+        role="group"
+        aria-label="Zoom"
+        className="pointer-events-auto flex flex-wrap items-center justify-center gap-1 rounded-full border border-white/15 bg-black/60 p-1 shadow-soft backdrop-blur-sm"
+      >
+        {presets.map((preset) => {
+          const isActive = isZoomPresetActive(activeZoom, preset.value);
 
-        return (
-          <button
-            key={String(preset.value)}
-            type="button"
-            disabled={disabled}
-            aria-pressed={isActive}
-            aria-label={`${preset.label} zoom`}
-            onClick={() => onSelectZoom(preset.value)}
-            className={cn(
-              "inline-flex min-w-11 touch-manipulation items-center justify-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-              "disabled:cursor-not-allowed disabled:opacity-50",
-              isActive
-                ? "border-pink-highlight bg-pink/10 text-pink-accent"
-                : "border-container-border bg-white text-muted hover:border-lavender-deep/35 hover:text-ink",
-            )}
-          >
-            {preset.label}
-          </button>
-        );
-      })}
+          return (
+            <button
+              key={String(preset.value)}
+              type="button"
+              disabled={disabled}
+              aria-pressed={isActive}
+              aria-label={`${preset.label} zoom`}
+              onClick={() => onSelectZoom(preset.value)}
+              className={cn(
+                "inline-flex min-w-11 touch-manipulation items-center justify-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                isActive
+                  ? "border-white/35 bg-white/20 text-white"
+                  : "border-transparent text-white/75 hover:bg-white/10 hover:text-white",
+              )}
+            >
+              {preset.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -661,6 +666,8 @@ function CaptureOverlay({
   flash,
   isCapturing,
   isOpening,
+  photosTaken,
+  maxPhotos,
   pendingUploads,
   zoomPresets,
   activeZoom,
@@ -674,6 +681,8 @@ function CaptureOverlay({
   flash: boolean;
   isCapturing: boolean;
   isOpening: boolean;
+  photosTaken: number;
+  maxPhotos: number;
   pendingUploads: number;
   zoomPresets: ZoomPreset[];
   activeZoom: number | null;
@@ -686,7 +695,10 @@ function CaptureOverlay({
   const shutterRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const shutterDisabled = isOpening || isCapturing || pendingUploads > 0;
-  const zoomDisabled = isOpening || isCapturing || isApplyingZoom;
+  const zoomDisabled = isOpening || isApplyingZoom;
+  const showSavingOverlay = isCapturing || pendingUploads > 0;
+  const showZoomOverlay =
+    !showSavingOverlay && !isOpening && zoomPresets.length > 0;
 
   useLayoutEffect(() => {
     previousFocusRef.current =
@@ -760,8 +772,11 @@ function CaptureOverlay({
         >
           <div className="relative flex w-full items-center justify-between gap-3">
             <AppBackButton onBack={onClose} backLabel="Close camera" />
-            <p className="pointer-events-none absolute inset-x-0 text-center text-[11px] font-medium uppercase tracking-overline text-pink-muted">
-              Capture memory
+            <p className="pointer-events-none absolute inset-x-0 flex items-center justify-center gap-1.5 text-[11px] font-medium uppercase tracking-overline">
+              <span className="text-pink-muted">Capture memory</span>
+              <span className="text-pink-highlight">
+                ({photosTaken + pendingUploads}/{maxPhotos})
+              </span>
             </p>
             <div className="h-9 w-9 shrink-0" aria-hidden />
           </div>
@@ -769,15 +784,16 @@ function CaptureOverlay({
 
         <div
           className={cn(
-            "relative z-10 flex min-h-0 flex-1 flex-col px-4 pb-2",
+            "relative z-10 flex min-h-0 flex-1 flex-col items-center px-4 pb-2",
             "md:flex-none md:px-6 md:pb-4",
           )}
         >
           <div
             className={cn(
-              "relative min-h-[min(42dvh,22rem)] flex-1 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
-              "md:aspect-4/3 md:h-auto md:min-h-0 md:max-h-[min(52vh,32rem)] md:w-full md:flex-none",
+              "relative mx-auto w-full max-w-full shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
+              "max-h-[min(52vh,32rem)]",
             )}
+            style={{ aspectRatio: CAMERA_ASPECT_RATIO }}
           >
             <video
               ref={videoRef}
@@ -799,8 +815,16 @@ function CaptureOverlay({
                 </p>
               </div>
             )}
-            {pendingUploads > 0 && !error && (
+            {showSavingOverlay && !error && (
               <SavingOverlay pendingUploads={pendingUploads} />
+            )}
+            {showZoomOverlay && (
+              <CameraZoomControls
+                presets={zoomPresets}
+                activeZoom={activeZoom}
+                disabled={zoomDisabled}
+                onSelectZoom={onSelectZoom}
+              />
             )}
           </div>
         </div>
@@ -818,12 +842,6 @@ function CaptureOverlay({
               {error}
             </p>
           )}
-          <CameraZoomControls
-            presets={zoomPresets}
-            activeZoom={activeZoom}
-            disabled={zoomDisabled}
-            onSelectZoom={onSelectZoom}
-          />
           <ShutterButton
             ref={shutterRef}
             disabled={shutterDisabled}
@@ -845,9 +863,9 @@ function FlashOverlay() {
 
 function SavingOverlay({ pendingUploads }: { pendingUploads: number }) {
   const label =
-    pendingUploads === 1
-      ? "Saving photo…"
-      : `Saving ${pendingUploads} photos…`;
+    pendingUploads > 1
+      ? `Saving ${pendingUploads} photos…`
+      : "Saving photo…";
 
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center px-3 md:bottom-4">
