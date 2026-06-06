@@ -235,13 +235,15 @@ export function GalleryExperience({
       <Card border="neutral" className="text-center">
         <p className="inline-flex items-center justify-center gap-3 text-sm">
           <TbCashHeart className="h-4 w-4 shrink-0 text-pink-highlight" aria-hidden />
-          <span className="text-pink-highlight">{totalPhotos}</span>{" "}
-          <span className="text-muted">
-            {totalPhotos === 1 ? "memory" : "memories"} from
-          </span>{" "}
-          <span className="text-pink-highlight">{perspectives.length}</span>{" "}
-          <span className="text-muted">
-            {perspectives.length === 1 ? "perspective" : "perspectives"}
+          <span>
+            <span className="text-pink-highlight">{totalPhotos}</span>{" "}
+            <span className="text-muted">
+              {totalPhotos === 1 ? "memory" : "memories"} from
+            </span>{" "}
+            <span className="text-pink-highlight">{perspectives.length}</span>{" "}
+            <span className="text-muted">
+              {perspectives.length === 1 ? "perspective" : "perspectives"}
+            </span>
           </span>
         </p>
       </Card>
@@ -261,7 +263,6 @@ export function GalleryExperience({
       </div>
 
       <Card border="neutral" className="space-y-3">
-        <p className="text-sm font-medium text-ink">Download</p>
         {downloadError && (
           <p className="text-sm text-pink">{downloadError}</p>
         )}

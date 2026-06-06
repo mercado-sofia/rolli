@@ -13,6 +13,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { MobileLoadingSpinner } from "@/components/ui/mobile-loading-spinner";
 import { removeParticipantByKeeper } from "@/lib/hangout/hangout-api";
 import { isCurrentFilmKeeper } from "@/lib/hangout/participant";
+import { useDisplayRosterParticipants } from "@/lib/hangout/roster-display";
 import { ROLLI_SESSION_GUIDE_CONTENT } from "@/lib/hangout/setup";
 import type { Hangout } from "@/types/hangout";
 import type { HangoutRosterParticipant } from "@/types/hangout-roster";
@@ -173,6 +174,10 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
   const [kickError, setKickError] = useState<string | null>(null);
 
   const isFilmKeeper = isCurrentFilmKeeper(participant, hangout);
+  const displayParticipants = useDisplayRosterParticipants(
+    rosterParticipants,
+    participant.id,
+  );
 
   const activeTab = mode === "guessing" ? "participants" : tab;
 
@@ -311,7 +316,7 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
             <ParticipantsTabPanel
               loading={rosterLoading}
               error={rosterError}
-              participants={rosterParticipants}
+              participants={displayParticipants}
               participant={participant}
               isFilmKeeper={isFilmKeeper}
               onKick={handleKickRequest}
