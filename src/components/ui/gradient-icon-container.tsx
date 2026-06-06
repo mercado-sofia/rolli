@@ -20,7 +20,7 @@ const borderToneStyles = {
 } as const;
 
 const animatedBorderGradient =
-  "conic-gradient(from 0deg, rgb(26 26 26 / 0.14) 0deg, rgb(185 147 214 / 0.55) 100deg, rgb(251 162 194 / 0.5) 200deg, rgb(26 26 26 / 0.14) 300deg, rgb(26 26 26 / 0.14) 360deg)";
+  "conic-gradient(from 0deg, #fff 0deg, rgb(185 147 214 / 0.55) 100deg, rgb(251 162 194 / 0.5) 200deg, #fff 300deg, #fff 360deg)";
 
 type GradientIconContainerProps = {
   children: ReactNode;

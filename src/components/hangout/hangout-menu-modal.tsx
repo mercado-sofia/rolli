@@ -237,6 +237,7 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
         titleId="hangout-menu-title"
         title={modalTitle}
         centerTitle
+        fitContent={mode === "lobby" && activeTab === "guide"}
         bodyClassName="px-5 pb-8 sm:px-6 sm:pb-9"
         panelClassName="w-[min(100%,26rem)]"
       >
@@ -277,7 +278,7 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
           </div>
         ) : null}
 
-        <div className="min-h-48">
+        <div className={activeTab === "guide" ? undefined : "min-h-48"}>
           {mode === "lobby" && activeTab === "guide" ? (
             <RolliGuideContent />
           ) : activeTab === "participants" || mode === "guessing" ? (

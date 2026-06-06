@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
-import { LuMoon } from "react-icons/lu";
+import { LuFilm } from "react-icons/lu";
 
 import {
   type AbandonHangoutUiState,
@@ -202,7 +202,7 @@ export default function WaitingRoomPage() {
 
               <Card border="neutral" className="text-center">
                 <HangoutCardIcon
-                  icon={LuMoon}
+                  icon={LuFilm}
                   animatedBorder
                   containerClassName="md:h-14 md:w-14"
                   iconClassName="text-ink md:h-7 md:w-7"

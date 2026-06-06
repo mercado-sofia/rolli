@@ -142,6 +142,8 @@ type GuideModalShellProps = {
   centerTitle?: boolean;
   /** Top-right × control — off when footer has a dismiss CTA (e.g. session start guide). */
   showHeaderClose?: boolean;
+  /** Grow panel to content (up to viewport) instead of a fixed max height with inner scroll. */
+  fitContent?: boolean;
 };
 
 export function GuideModalShell({
@@ -155,6 +157,7 @@ export function GuideModalShell({
   bodyClassName,
   centerTitle = false,
   showHeaderClose = true,
+  fitContent = false,
 }: GuideModalShellProps) {
   const { dialogRef, requestClose, handleDialogClose, handleCancel } =
     useGuideDialog(open, onClose);
@@ -190,15 +193,21 @@ export function GuideModalShell({
         <div
           role="document"
           className={cn(
-            "relative flex max-h-[min(88dvh,36rem)] w-[min(100%,24rem)] flex-col overflow-hidden",
+            "relative flex w-[min(100%,24rem)] flex-col",
             "rounded-3xl bg-white shadow-[0_16px_48px_rgba(0,0,0,0.2)]",
+            fitContent
+              ? "h-auto max-h-[88dvh] overflow-y-auto"
+              : "max-h-[min(88dvh,36rem)] overflow-hidden",
             panelClassName,
           )}
           onClick={handlePanelClick}
         >
           <div
             className={cn(
-              "min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-5 pt-5 sm:pt-6",
+              "pb-5 pt-5 sm:pt-6",
+              fitContent
+                ? undefined
+                : "min-h-0 flex-1 overflow-y-auto overscroll-y-contain",
               bodyClassName ?? "px-5 sm:px-6",
             )}
           >
