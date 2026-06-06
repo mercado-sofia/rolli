@@ -24,7 +24,6 @@ import type { Participant } from "@/types/participant";
 import type {
   MarkReadyForGuessingResult,
   RevealPerspective,
-  RevealReadyProgress,
 } from "@/types/reveal";
 
 function readUsableRevealPreload(hangoutId: string) {
@@ -69,9 +68,6 @@ export function RevealExperience({
   const [perspectives, setPerspectives] = useState<RevealPerspective[]>(
     usablePreload?.perspectives ?? [],
   );
-  const [readyProgress, setReadyProgress] = useState<RevealReadyProgress | null>(
-    null,
-  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(!usablePreload);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -103,9 +99,6 @@ export function RevealExperience({
       const signed = await signRevealPhotoUrls(data.perspectives);
       setPerspectives(signed);
       setSignedAt(Date.now());
-      if (data.readyProgress) {
-        setReadyProgress(data.readyProgress);
-      }
       syncSessionFromRevealState({
         hangout: data.hangout,
         participant: data.participant,
@@ -155,7 +148,6 @@ export function RevealExperience({
         setPerspectives([]);
         setCurrentIndex(0);
         setSignedAt(null);
-        setReadyProgress(null);
         setLoadError(error ?? "Could not load reveal");
         setLoading(false);
         return;
@@ -168,7 +160,6 @@ export function RevealExperience({
         setPerspectives(signed);
         setCurrentIndex(0);
         setSignedAt(Date.now());
-        setReadyProgress(data.readyProgress ?? null);
         syncSessionFromRevealState({
           hangout: data.hangout,
           participant: data.participant,
@@ -178,7 +169,6 @@ export function RevealExperience({
         setPerspectives([]);
         setCurrentIndex(0);
         setSignedAt(null);
-        setReadyProgress(null);
         setLoadError("Could not load reveal photos");
       } finally {
         if (!cancelled) {
@@ -249,8 +239,7 @@ export function RevealExperience({
   ]);
 
   const continueToGuessingFooter = useCallback(
-    (hint: string): SetupFlowFooterState => ({
-      hint,
+    (): SetupFlowFooterState => ({
       children: (
         <>
           {finishError && (
@@ -276,13 +265,6 @@ export function RevealExperience({
     ],
   );
 
-  const swipeHint = useCallback(() => {
-    if (readyProgress && readyProgress.total > 0) {
-      return `${readyProgress.ready} of ${readyProgress.total} ready for guessing · Swipe through photos`;
-    }
-    return "Swipe through photos";
-  }, [readyProgress]);
-
   useEffect(() => {
     if (!footerEnabled || !onFooterChange || loading || loadError) {
       onFooterChange?.({});
@@ -290,19 +272,12 @@ export function RevealExperience({
     }
 
     if (perspectives.length === 0 || totalPhotos === 0) {
-      onFooterChange(
-        continueToGuessingFooter(
-          alreadyReadyForGuessing
-            ? "You are ready — continue to guessing when you like."
-            : "No memories were captured — you can still continue to guessing.",
-        ),
-      );
+      onFooterChange(continueToGuessingFooter());
       return;
     }
 
     if (!isLastPerspective) {
       onFooterChange({
-        hint: swipeHint(),
         children: (
           <Button
             type="button"
@@ -316,15 +291,8 @@ export function RevealExperience({
       return;
     }
 
-    onFooterChange(
-      continueToGuessingFooter(
-        alreadyReadyForGuessing
-          ? "You are ready — continue to guessing when you like."
-          : "Continue when you're done viewing.",
-      ),
-    );
+    onFooterChange(continueToGuessingFooter());
   }, [
-    alreadyReadyForGuessing,
     continueToGuessingFooter,
     footerEnabled,
     isLastPerspective,
@@ -332,7 +300,6 @@ export function RevealExperience({
     loading,
     onFooterChange,
     perspectives.length,
-    swipeHint,
     totalPhotos,
     goToNextPerspective,
   ]);

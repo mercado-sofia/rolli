@@ -9,9 +9,9 @@ type WaitingRoomNicknameProps = {
 };
 
 const NICKNAME_TOGGLE_BUTTON_CLASS = cn(
-  "inline-flex min-h-10 items-center justify-center rounded-full border border-pink-highlight",
-  "bg-pink-highlight-faint px-4 text-sm font-medium text-ink",
-  "transition-colors hover:border-pink-highlight hover:bg-pink/10",
+  "inline-flex items-center justify-center border-none",
+  "text-sm font-medium text-ink",
+  "hover:cursor-pointer",
 );
 
 export function WaitingRoomNickname({ nickname }: WaitingRoomNicknameProps) {

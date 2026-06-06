@@ -23,11 +23,7 @@ import { useHangoutRouteGuard } from "@/hooks/use-hangout-route-guard";
 import { HANGOUT_GALLERY_PATH_SUFFIX } from "@/lib/hangout/routes";
 import { useHangoutSessionGuard } from "@/hooks/use-hangout-session-guard";
 import { useSessionHydrated } from "@/hooks/use-session-hydrated";
-import {
-  APP_PRIMARY_BUTTON_CLASS,
-  GALLERY_LOADING_MIN_HEIGHT_CLASS,
-} from "@/lib/app-page-layout";
-import { HANGOUT_LIMITS } from "@/lib/constants";
+import { APP_PRIMARY_BUTTON_CLASS } from "@/lib/app-page-layout";
 import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/store/session-store";
 
@@ -93,15 +89,12 @@ export default function GalleryPage() {
   return (
     <HangoutPageLoadGate
       loadError={loadError}
-      isLoading={isLoading}
+      isLoading={galleryReady ? false : isLoading}
       displayHangout={displayHangout}
       sessionHydrated={sessionHydrated}
       forceLoading={!galleryReady && !gateBinding}
       onRetry={retry}
       mainClassName={GALLERY_MAIN_CLASS}
-      loadingSkeleton={
-        <div className={cn("animate-pulse rounded-3xl bg-black/10", GALLERY_LOADING_MIN_HEIGHT_CLASS)} />
-      }
     >
       {gateBinding ? (
     <HangoutParticipantSessionGate
@@ -131,10 +124,7 @@ export default function GalleryPage() {
           />
 
           {!galleryLoading ? (
-            <SetupFlowFooter
-              className={GALLERY_FOOTER_CLASS}
-              hint={`Save your favorite memories or head back home. Memories are kept for ${HANGOUT_LIMITS.retentionDays} days.`}
-            >
+            <SetupFlowFooter className={GALLERY_FOOTER_CLASS}>
               <BackHomeButton className={APP_PRIMARY_BUTTON_CLASS} />
               <Link
                 href={`/h/${slug}/guessing`}

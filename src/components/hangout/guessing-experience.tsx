@@ -312,19 +312,8 @@ export function GuessingExperience({
       return;
     }
 
-    if (isCompleted && results) {
-      onFooterChange({
-        hint: "Browse every perspective in the memory gallery.",
-        showGalleryButton: true,
-      });
-      return;
-    }
-
     if (isCompleted) {
-      onFooterChange({
-        hint: "Loading results…",
-        showGalleryButton: true,
-      });
+      onFooterChange({ showGalleryButton: true });
       return;
     }
 
@@ -364,7 +353,6 @@ export function GuessingExperience({
     loading,
     myVotesIn,
     onFooterChange,
-    results,
     state,
   ]);
 

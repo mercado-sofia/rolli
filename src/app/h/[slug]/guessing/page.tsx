@@ -73,6 +73,7 @@ export default function GuessingPage() {
   const storeParticipant = useSessionStore((state) => state.participant);
   const { displayHangout, isLoading, loadError, retry } = useDisplayHangout();
   const [footer, setFooter] = useState<SetupFlowFooterState>({});
+  const [navigatingToGallery, setNavigatingToGallery] = useState(false);
   const menuLayerRef = useRef<HangoutMenuLayerHandle>(null);
 
   useHangoutRouteGuard({
@@ -90,32 +91,50 @@ export default function GuessingPage() {
   const gateBinding = useHangoutGateBinding(slug, displayHangout, storeParticipant);
 
   const openMemoryGallery = useCallback(async () => {
-    if (displayHangout?.status === "completed") {
-      router.push(hangoutGalleryPath(slug));
-      return;
-    }
+    if (navigatingToGallery) return;
 
-    if (displayHangout?.status === "guessing" && participant) {
-      const { data, error } = await finishGuessing(
-        displayHangout.id,
-        participant.sessionToken,
-      );
+    setNavigatingToGallery(true);
 
-      if (data) {
-        setHangout(data);
+    try {
+      if (displayHangout?.status === "completed") {
         router.push(hangoutGalleryPath(slug));
         return;
       }
 
-      if (error?.includes("not in the guessing phase")) {
-        const { data: refreshed } = await fetchHangoutBySlug(slug);
-        if (refreshed?.status === "completed") {
-          setHangout(refreshed);
+      if (displayHangout?.status === "guessing" && participant) {
+        const { data, error } = await finishGuessing(
+          displayHangout.id,
+          participant.sessionToken,
+        );
+
+        if (data) {
+          setHangout(data);
           router.push(hangoutGalleryPath(slug));
+          return;
+        }
+
+        if (error?.includes("not in the guessing phase")) {
+          const { data: refreshed } = await fetchHangoutBySlug(slug);
+          if (refreshed?.status === "completed") {
+            setHangout(refreshed);
+            router.push(hangoutGalleryPath(slug));
+            return;
+          }
         }
       }
+
+      setNavigatingToGallery(false);
+    } catch {
+      setNavigatingToGallery(false);
     }
-  }, [displayHangout, participant, router, setHangout, slug]);
+  }, [
+    displayHangout,
+    navigatingToGallery,
+    participant,
+    router,
+    setHangout,
+    slug,
+  ]);
 
   const participantReadyForGuessing = isParticipantReadyForGuessing(participant);
 
@@ -157,9 +176,10 @@ export default function GuessingPage() {
       <Button
         type="button"
         className={HANGOUT_PINK_GRADIENT_BUTTON_CLASS}
+        disabled={navigatingToGallery}
         onClick={openMemoryGallery}
       >
-        View memory gallery
+        {navigatingToGallery ? "View memory gallery…" : "View memory gallery"}
       </Button>
       <BackHomeButton className={APP_PRIMARY_BUTTON_CLASS} />
     </>
@@ -181,7 +201,7 @@ export default function GuessingPage() {
   const pageFooter = (
     <SetupFlowFooter
       className={isCompleted ? RESULTS_FOOTER_CLASS : undefined}
-      hint={footer.hint}
+      hint={footer.showGalleryButton ? undefined : footer.hint}
     >
       {footerActions}
     </SetupFlowFooter>

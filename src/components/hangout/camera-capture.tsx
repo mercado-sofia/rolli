@@ -4,7 +4,6 @@ import {
   forwardRef,
   useCallback,
   useEffect,
-  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -15,7 +14,6 @@ import { createPortal } from "react-dom";
 import { LuCamera } from "react-icons/lu";
 
 import { AppBackButton } from "@/components/ui/app-back-button";
-import { getCaptureOverlayHint } from "@/lib/hangout/camera-capture-hint";
 import {
   CAMERA_VIDEO_CONSTRAINTS,
   encodeVideoFrameToJpeg,
@@ -301,8 +299,6 @@ export function CameraCapture({
     }
   }, []);
 
-  const helpText = getCaptureOverlayHint(zoomPresets.length > 0);
-
   const applyOptimisticPhotosTaken = useCallback(() => {
     if (!participant) return;
 
@@ -353,6 +349,7 @@ export function CameraCapture({
     if (!video || phase !== "ready") return;
 
     if (photosTaken + pendingUploadsRef.current >= maxPhotos) return;
+    if (pendingUploadsRef.current > 0) return;
 
     setPhase("capturing");
     setError(null);
@@ -430,7 +427,6 @@ export function CameraCapture({
             zoomPresets={zoomPresets}
             activeZoom={activeZoom}
             isApplyingZoom={isApplyingZoom}
-            helpText={helpText}
             onClose={closeCamera}
             onCapture={() => void takePhoto()}
             onSelectZoom={(value) => void handleSelectZoom(value)}
@@ -669,7 +665,6 @@ function CaptureOverlay({
   zoomPresets,
   activeZoom,
   isApplyingZoom,
-  helpText,
   onClose,
   onCapture,
   onSelectZoom,
@@ -683,7 +678,6 @@ function CaptureOverlay({
   zoomPresets: ZoomPreset[];
   activeZoom: number | null;
   isApplyingZoom: boolean;
-  helpText: string;
   onClose: () => void;
   onCapture: () => void;
   onSelectZoom: (value: number) => void;
@@ -691,8 +685,7 @@ function CaptureOverlay({
   const panelRef = useRef<HTMLDivElement>(null);
   const shutterRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-  const helpId = useId();
-  const shutterDisabled = isOpening || isCapturing;
+  const shutterDisabled = isOpening || isCapturing || pendingUploads > 0;
   const zoomDisabled = isOpening || isCapturing || isApplyingZoom;
 
   useLayoutEffect(() => {
@@ -748,7 +741,6 @@ function CaptureOverlay({
       role="dialog"
       aria-modal="true"
       aria-label="Capture memory"
-      aria-describedby={helpText ? helpId : undefined}
     >
       <div
         ref={panelRef}
@@ -832,11 +824,6 @@ function CaptureOverlay({
             disabled={zoomDisabled}
             onSelectZoom={onSelectZoom}
           />
-          {helpText ? (
-            <p id={helpId} className="text-center text-xs text-muted">
-              {helpText}
-            </p>
-          ) : null}
           <ShutterButton
             ref={shutterRef}
             disabled={shutterDisabled}
