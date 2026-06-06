@@ -1,4 +1,5 @@
-export const CAMERA_ASPECT_RATIO = 4 / 3;
+/** Portrait 4:3 (iPhone default): width:height = 3:4 when holding the phone upright. */
+export const CAMERA_ASPECT_RATIO = 3 / 4;
 export const CAMERA_MAX_EDGE = 1200;
 
 const DEFAULT_JPEG_QUALITY = 0.78;
@@ -104,6 +105,6 @@ export async function encodeVideoFrameToJpeg(
 export const CAMERA_VIDEO_CONSTRAINTS: MediaTrackConstraints = {
   facingMode: { ideal: "environment" },
   aspectRatio: { ideal: CAMERA_ASPECT_RATIO },
-  width: { ideal: 1280, max: 1920 },
-  height: { ideal: 960, max: 1440 },
+  width: { ideal: 960, max: 1440 },
+  height: { ideal: 1280, max: 1920 },
 };

@@ -791,7 +791,7 @@ function CaptureOverlay({
           <div
             className={cn(
               "relative mx-auto w-full max-w-full shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
-              "max-h-[min(52vh,32rem)]",
+              "max-h-[min(62dvh,36rem)]",
             )}
             style={{ aspectRatio: CAMERA_ASPECT_RATIO }}
           >

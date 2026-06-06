@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { HiOutlineDocumentDownload } from "react-icons/hi";
 
 import { GalleryFolderCard } from "@/components/hangout/gallery-folder-card";
 import { Button } from "@/components/ui/button";
@@ -270,6 +271,7 @@ export function GalleryExperience({
               )
             }
           >
+            <HiOutlineDocumentDownload className="h-4 w-4 shrink-0" aria-hidden />
             {downloading === "full-album"
               ? "Preparing zip…"
               : "Download full album (zip)"}
@@ -290,6 +292,7 @@ export function GalleryExperience({
                 )
               }
             >
+              <HiOutlineDocumentDownload className="h-4 w-4 shrink-0" aria-hidden />
               {downloading === `perspective-${selectedPerspective.participantId}`
                 ? "Preparing zip…"
                 : `Download ${selectedPerspective.nickname}'s folder (zip)`}
