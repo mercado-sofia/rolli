@@ -232,18 +232,19 @@ export function GalleryExperience({
 
   return (
     <div className="space-y-6">
-      <Card border="neutral" className="text-center">
-        <p className="inline-flex items-center justify-center gap-3 text-sm">
-          <TbCashHeart className="h-4 w-4 shrink-0 text-pink-highlight" aria-hidden />
-          <span>
-            <span className="text-pink-highlight">{totalPhotos}</span>{" "}
-            <span className="text-muted">
-              {totalPhotos === 1 ? "memory" : "memories"} from
-            </span>{" "}
-            <span className="text-pink-highlight">{perspectives.length}</span>{" "}
-            <span className="text-muted">
-              {perspectives.length === 1 ? "perspective" : "perspectives"}
-            </span>
+      <Card border="neutral" className="relative text-center">
+        <TbCashHeart
+          className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-pink-highlight"
+          aria-hidden
+        />
+        <p className="text-sm">
+          <span className="text-pink-highlight">{totalPhotos}</span>{" "}
+          <span className="text-muted">
+            {totalPhotos === 1 ? "memory" : "memories"} from
+          </span>{" "}
+          <span className="text-pink-highlight">{perspectives.length}</span>{" "}
+          <span className="text-muted">
+            {perspectives.length === 1 ? "perspective" : "perspectives"}
           </span>
         </p>
       </Card>

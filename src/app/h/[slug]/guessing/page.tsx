@@ -49,22 +49,6 @@ import type { Hangout } from "@/types/hangout";
 import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/store/session-store";
 
-/** Scroll the full page (header + content + actions) instead of pinning CTAs to the viewport. */
-const RESULTS_SHELL_CLASS =
-  "!max-h-none overflow-y-auto overscroll-y-contain supports-[height:100dvh]:!max-h-none";
-
-const RESULTS_MAIN_CLASS = cn(
-  SETUP_FLOW_MAIN_CLASS,
-  SETUP_FLOW_MAIN_UPPER_CLASS,
-  "!min-h-0 !flex-none !overflow-visible md:!overflow-visible",
-  "md:rounded-b-[1.75rem] md:border-b md:pb-8 lg:pb-9",
-);
-
-const RESULTS_FOOTER_CLASS = cn(
-  "mt-8 md:col-auto md:row-auto",
-  "md:mx-0 md:rounded-none md:border-0 md:border-t md:border-container-border/60 md:px-0 md:pb-0 md:pt-8 lg:pt-9",
-);
-
 export default function GuessingPage() {
   const params = useParams<{ slug: string }>();
   const slug = params.slug;
@@ -201,10 +185,7 @@ export default function GuessingPage() {
   );
 
   const pageFooter = (
-    <SetupFlowFooter
-      className={isCompleted ? RESULTS_FOOTER_CLASS : undefined}
-      hint={footer.showGalleryButton ? undefined : footer.hint}
-    >
+    <SetupFlowFooter hint={footer.showGalleryButton ? undefined : footer.hint}>
       {footerActions}
     </SetupFlowFooter>
   );
@@ -231,10 +212,7 @@ export default function GuessingPage() {
       hangoutTitle={gateBinding.hangoutTitle}
     >
       {guessingReady && participant && displayHangout ? (
-    <SetupFlowShell
-      compact
-      className={isCompleted ? RESULTS_SHELL_CLASS : undefined}
-    >
+    <SetupFlowShell compact>
       {showMenu ? (
         <HangoutMenuLayer
           ref={menuLayerRef}
@@ -260,13 +238,7 @@ export default function GuessingPage() {
         />
       </header>
 
-      <main
-        className={
-          isCompleted
-            ? RESULTS_MAIN_CLASS
-            : cn(SETUP_FLOW_MAIN_CLASS, SETUP_FLOW_MAIN_UPPER_CLASS)
-        }
-      >
+      <main className={cn(SETUP_FLOW_MAIN_CLASS, SETUP_FLOW_MAIN_UPPER_CLASS)}>
         <div className={cn(SETUP_FLOW_MAIN_INNER_CLASS, "flex flex-col gap-4")}>
           <FilmKeeperPromotionBanner
             visible={showPromotion}
@@ -280,11 +252,10 @@ export default function GuessingPage() {
             onHangoutCompleted={handleHangoutCompleted}
             onFooterChange={setFooter}
           />
-          {isCompleted ? pageFooter : null}
         </div>
       </main>
 
-      {!isCompleted ? pageFooter : null}
+      {pageFooter}
     </SetupFlowShell>
       ) : null}
     </HangoutParticipantSessionGate>
