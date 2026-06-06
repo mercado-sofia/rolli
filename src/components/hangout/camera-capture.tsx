@@ -15,7 +15,6 @@ import { createPortal } from "react-dom";
 import { LuCamera } from "react-icons/lu";
 
 import { AppBackButton } from "@/components/ui/app-back-button";
-import { useTouchPrimary } from "@/hooks/use-touch-primary";
 import { getCaptureOverlayHint } from "@/lib/hangout/camera-capture-hint";
 import {
   CAMERA_VIDEO_CONSTRAINTS,
@@ -115,7 +114,6 @@ export function CameraCapture({
   const [zoomPresets, setZoomPresets] = useState<ZoomPreset[]>([]);
   const [activeZoom, setActiveZoom] = useState<number | null>(null);
   const [isApplyingZoom, setIsApplyingZoom] = useState(false);
-  const isTouchPrimary = useTouchPrimary();
   const mounted = useSyncExternalStore(
     subscribeToClientMount,
     getClientMountSnapshot,
@@ -303,10 +301,7 @@ export function CameraCapture({
     }
   }, []);
 
-  const helpText = getCaptureOverlayHint({
-    isTouchPrimary,
-    hasZoomControls: zoomPresets.length > 0,
-  });
+  const helpText = getCaptureOverlayHint(zoomPresets.length > 0);
 
   const applyOptimisticPhotosTaken = useCallback(() => {
     if (!participant) return;
@@ -504,7 +499,7 @@ function CameraTriggerButton({
         onClick={onClick}
         aria-label={ariaLabel}
         className={cn(
-          "inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full border border-black bg-white",
+          "inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full border-2 border-black bg-white",
           "active:scale-[0.97]",
           "disabled:cursor-not-allowed disabled:opacity-45",
           "h-20 w-20 sm:h-24 sm:w-24",
@@ -600,44 +595,64 @@ const ShutterButton = forwardRef(function ShutterButton(
   {
     disabled,
     isCapturing,
+    isSaving,
     onClick,
   }: {
     disabled?: boolean;
     isCapturing?: boolean;
+    isSaving?: boolean;
     onClick: () => void;
   },
   ref: React.ForwardedRef<HTMLButtonElement>,
 ) {
+  const isBusy = isCapturing || isSaving;
+  const statusLabel = isCapturing
+    ? "Capturing photo"
+    : isSaving
+      ? "Saving photo"
+      : "Take photo";
+
   return (
     <button
       ref={ref}
       type="button"
       disabled={disabled}
       onClick={onClick}
-      aria-label={isCapturing ? "Capturing photo" : "Take photo"}
+      aria-busy={isBusy}
+      aria-label={statusLabel}
       className={cn(
         "relative flex h-20 w-20 items-center justify-center rounded-full",
-        "border-2 border-lavender-deep/35 bg-white shadow-glow",
-        "transition-transform hover:scale-[1.03] active:scale-[0.97]",
+        "border-2 bg-white shadow-glow transition-all",
         "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100",
-        isCapturing && "animate-pulse",
+        isBusy
+          ? "border-pink-highlight/45"
+          : "border-lavender-deep/35 hover:scale-[1.03] active:scale-[0.97]",
       )}
     >
-      <span className="sr-only">{isCapturing ? "Capturing…" : "Take photo"}</span>
-      <span
-        className={cn(
-          "flex items-center justify-center rounded-full bg-gradient-pastel transition-all",
-          isCapturing ? "h-8 w-8" : "h-13 w-13",
-        )}
-        aria-hidden
-      >
-        <span
-          className={cn(
-            "rounded-full border-2 border-white/90 bg-white",
-            isCapturing ? "h-3 w-3" : "h-11 w-11",
-          )}
-        />
+      <span className="sr-only">
+        {isCapturing ? "Capturing…" : isSaving ? "Saving…" : "Take photo"}
       </span>
+      {isBusy ? (
+        <>
+          <span
+            className="absolute inset-1 animate-spin rounded-full border-2 border-pink-highlight/20 border-t-pink-highlight"
+            aria-hidden
+          />
+          <span
+            className="relative flex h-8 w-8 items-center justify-center rounded-full bg-gradient-pastel"
+            aria-hidden
+          >
+            <span className="h-3 w-3 rounded-full border border-white/90 bg-white" />
+          </span>
+        </>
+      ) : (
+        <span
+          className="flex h-13 w-13 items-center justify-center rounded-full bg-gradient-pastel"
+          aria-hidden
+        >
+          <span className="h-11 w-11 rounded-full border-2 border-white/90 bg-white" />
+        </span>
+      )}
     </button>
   );
 });
@@ -731,7 +746,7 @@ function CaptureOverlay({
       role="dialog"
       aria-modal="true"
       aria-label="Capture memory"
-      aria-describedby={helpId}
+      aria-describedby={helpText ? helpId : undefined}
     >
       <div
         ref={panelRef}
@@ -790,6 +805,9 @@ function CaptureOverlay({
                 </p>
               </div>
             )}
+            {pendingUploads > 0 && !error && (
+              <SavingOverlay pendingUploads={pendingUploads} />
+            )}
           </div>
         </div>
 
@@ -806,24 +824,22 @@ function CaptureOverlay({
               {error}
             </p>
           )}
-          {pendingUploads > 0 && !error && (
-            <p className="text-center text-xs text-muted">
-              Saving {pendingUploads === 1 ? "photo" : `${pendingUploads} photos`}…
-            </p>
-          )}
           <CameraZoomControls
             presets={zoomPresets}
             activeZoom={activeZoom}
             disabled={zoomDisabled}
             onSelectZoom={onSelectZoom}
           />
-          <p id={helpId} className="text-center text-xs text-muted">
-            {helpText}
-          </p>
+          {helpText ? (
+            <p id={helpId} className="text-center text-xs text-muted">
+              {helpText}
+            </p>
+          ) : null}
           <ShutterButton
             ref={shutterRef}
             disabled={shutterDisabled}
             isCapturing={isCapturing}
+            isSaving={pendingUploads > 0}
             onClick={onCapture}
           />
         </footer>
@@ -835,5 +851,30 @@ function CaptureOverlay({
 function FlashOverlay() {
   return (
     <div className="pointer-events-none absolute inset-0 animate-pulse bg-linear-to-br from-white/80 via-pink/30 to-lavender/20" />
+  );
+}
+
+function SavingOverlay({ pendingUploads }: { pendingUploads: number }) {
+  const label =
+    pendingUploads === 1
+      ? "Saving photo…"
+      : `Saving ${pendingUploads} photos…`;
+
+  return (
+    <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center px-3 md:bottom-4">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+        aria-label={label}
+        className="flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-4 py-2 shadow-soft backdrop-blur-sm"
+      >
+        <div
+          className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-white/25 border-t-white"
+          aria-hidden
+        />
+        <p className="text-xs font-medium text-white">{label}</p>
+      </div>
+    </div>
   );
 }

@@ -68,11 +68,6 @@ function RosterRow({
               ) : null}
             </span>
           </span>
-          {row.isFilmKeeper ? (
-            <span className="shrink-0 rounded-full bg-pink/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-pink-highlight">
-              film keeper
-            </span>
-          ) : null}
         </div>
         {showGuessingStatus ? (
           <p
@@ -242,7 +237,7 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
         titleId="hangout-menu-title"
         title={modalTitle}
         centerTitle
-        bodyClassName="px-5 pb-6 sm:px-6"
+        bodyClassName="px-5 pb-8 sm:px-6 sm:pb-9"
         panelClassName="w-[min(100%,26rem)]"
       >
         {mode === "lobby" ? (

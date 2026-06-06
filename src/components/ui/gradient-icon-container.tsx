@@ -45,22 +45,18 @@ export function GradientIconContainer({
     return (
       <div
         className={cn(
-          "relative inline-flex shrink-0 overflow-hidden p-px",
+          "relative inline-flex shrink-0 overflow-hidden p-0.5",
           styles.outer,
+          "rounded-full",
           className,
         )}
       >
         <div
-          className="icon-border-gradient-spin absolute inset-[-100%]"
+          className="icon-border-gradient-spin absolute -inset-full"
           style={{ background: animatedBorderGradient }}
           aria-hidden
         />
-        <div
-          className={cn(
-            "relative z-10 flex h-full w-full items-center justify-center bg-white",
-            styles.inner,
-          )}
-        >
+        <div className="relative z-10 flex h-full w-full items-center justify-center rounded-full bg-white">
           {children}
         </div>
       </div>
