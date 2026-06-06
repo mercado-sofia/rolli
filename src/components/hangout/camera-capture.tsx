@@ -802,13 +802,13 @@ function CaptureOverlay({
 
         <div
           className={cn(
-            "relative z-10 flex min-h-0 flex-1 items-center justify-center px-4 py-2",
-            "md:px-6 md:py-4",
+            "relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-4 py-2",
+            "pb-[max(1rem,env(safe-area-inset-bottom))] md:px-6 md:py-4 md:pb-6",
           )}
         >
           <div
             className={cn(
-              "relative mx-auto h-full max-h-full w-auto max-w-full shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
+              "relative mx-auto min-h-0 w-auto max-w-full flex-1 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
             )}
             style={{ aspectRatio: CAMERA_ASPECT_RATIO }}
           >
@@ -844,18 +844,8 @@ function CaptureOverlay({
               />
             )}
           </div>
-        </div>
-
-        <footer
-          className={cn(
-            "relative z-10 flex shrink-0 flex-col items-center gap-3",
-            "border-t border-container-border/60 bg-white/95 px-4 pt-4 backdrop-blur-sm",
-            "pb-[max(1rem,env(safe-area-inset-bottom))]",
-            "md:px-6 md:pb-6 md:pt-5",
-          )}
-        >
           {error && (
-            <p className="max-w-sm rounded-2xl bg-pink/10 px-4 py-2 text-center text-sm text-pink-accent">
+            <p className="max-w-sm shrink-0 rounded-2xl bg-pink/10 px-4 py-2 text-center text-sm text-pink-accent">
               {error}
             </p>
           )}
@@ -866,7 +856,7 @@ function CaptureOverlay({
             isSaving={pendingUploads > 0}
             onClick={onCapture}
           />
-        </footer>
+        </div>
       </div>
     </div>
   );
