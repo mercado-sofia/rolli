@@ -234,15 +234,15 @@ export function GalleryExperience({
     <div className="space-y-6">
       <Card border="neutral" className="relative text-center">
         <TbCashHeart
-          className="absolute left-0 top-1/2 h-4 w-4 -translate-y-1/2 text-pink-highlight"
+          className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-pink-highlight"
           aria-hidden
         />
         <p className="text-sm">
-          <span className="text-pink-highlight">{totalPhotos}</span>{" "}
+          <span className="font-medium text-pink-highlight">{totalPhotos}</span>{" "}
           <span className="text-muted">
             {totalPhotos === 1 ? "memory" : "memories"} from
           </span>{" "}
-          <span className="text-pink-highlight">{perspectives.length}</span>{" "}
+          <span className="font-medium text-pink-highlight">{perspectives.length}</span>{" "}
           <span className="text-muted">
             {perspectives.length === 1 ? "perspective" : "perspectives"}
           </span>
