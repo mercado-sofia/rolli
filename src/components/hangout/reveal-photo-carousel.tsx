@@ -242,7 +242,7 @@ export function RevealPhotoCarousel({
       tabIndex={0}
       onKeyDown={handleCarouselKeyDown}
     >
-      <div className="relative mx-auto w-full max-w-76 px-5 sm:max-w-80 sm:px-6">
+      <div className="relative mx-auto w-full max-w-84 px-5 sm:max-w-88 sm:px-6">
         {photos.length > 1 ? (
           <>
             <button
@@ -275,7 +275,7 @@ export function RevealPhotoCarousel({
         ) : null}
         <div
           ref={deckRef}
-          className="relative aspect-3/4 w-full min-h-48 overflow-visible"
+          className="relative aspect-3/4 w-full min-h-56 overflow-visible"
         >
           {prevPhoto ? (
             <AdjacentSlideCard

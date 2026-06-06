@@ -499,18 +499,20 @@ function CameraTriggerButton({
         onClick={onClick}
         aria-label={ariaLabel}
         className={cn(
-          "inline-flex shrink-0 touch-manipulation items-center justify-center rounded-full border-2 border-black bg-white",
+          "inline-flex shrink-0 touch-manipulation rounded-full bg-gradient-pink-highlight p-0.5",
           "active:scale-[0.97]",
           "disabled:cursor-not-allowed disabled:opacity-45",
           "h-20 w-20 sm:h-24 sm:w-24",
         )}
       >
-        <LuCamera
-          size={iconSize}
-          strokeWidth={1.75}
-          className="text-pink-highlight"
-          aria-hidden
-        />
+        <span className="flex h-full w-full items-center justify-center rounded-full bg-white">
+          <LuCamera
+            size={iconSize}
+            strokeWidth={1.75}
+            className="text-pink-highlight"
+            aria-hidden
+          />
+        </span>
       </button>
     );
   }

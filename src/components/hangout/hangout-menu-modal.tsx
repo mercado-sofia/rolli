@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, startTransition, useCallback, useEffect, useState } from "react";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { PiSignOutBold } from "react-icons/pi";
@@ -10,6 +10,7 @@ import {
   RolliGuideContent,
 } from "@/components/hangout/guide-modals";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { MobileLoadingSpinner } from "@/components/ui/mobile-loading-spinner";
 import { removeParticipantByKeeper } from "@/lib/hangout/hangout-api";
 import { isCurrentFilmKeeper } from "@/lib/hangout/participant";
 import { ROLLI_SESSION_GUIDE_CONTENT } from "@/lib/hangout/setup";
@@ -37,6 +38,15 @@ type HangoutMenuModalProps = {
 };
 
 type MenuTab = "guide" | "participants";
+
+const EMPTY_READY_TABS: Record<MenuTab, boolean> = {
+  guide: false,
+  participants: false,
+};
+
+function TabPanelLoader() {
+  return <MobileLoadingSpinner inline className="min-h-48 py-8" />;
+}
 
 function RosterRow({
   row,
@@ -154,6 +164,7 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
   onRosterRefresh,
 }: HangoutMenuModalProps) {
   const [tab, setTab] = useState<MenuTab>(mode === "guessing" ? "participants" : "guide");
+  const [readyTabs, setReadyTabs] = useState(EMPTY_READY_TABS);
   const [kickTarget, setKickTarget] = useState<{
     id: string;
     nickname: string;
@@ -164,6 +175,30 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
   const isFilmKeeper = isCurrentFilmKeeper(participant, hangout);
 
   const activeTab = mode === "guessing" ? "participants" : tab;
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    let cancelled = false;
+    const frameId = requestAnimationFrame(() => {
+      if (cancelled) return;
+      startTransition(() => {
+        setReadyTabs((previous) => {
+          if (previous[activeTab]) return previous;
+          return { ...previous, [activeTab]: true };
+        });
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+    };
+  }, [activeTab, open]);
+
+  const activeTabReady = readyTabs[activeTab];
   const modalTitle =
     mode === "guessing"
       ? "Participants"
@@ -218,17 +253,6 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
     sessionToken,
   ]);
 
-  const participantsPanel = (
-    <ParticipantsTabPanel
-      loading={rosterLoading}
-      error={rosterError}
-      participants={rosterParticipants}
-      participant={participant}
-      isFilmKeeper={isFilmKeeper}
-      onKick={handleKickRequest}
-    />
-  );
-
   return (
     <>
       <GuideModalShell
@@ -279,10 +303,19 @@ export const HangoutMenuModal = memo(function HangoutMenuModal({
         ) : null}
 
         <div className={activeTab === "guide" ? undefined : "min-h-48"}>
-          {mode === "lobby" && activeTab === "guide" ? (
+          {!activeTabReady ? (
+            <TabPanelLoader />
+          ) : mode === "lobby" && activeTab === "guide" ? (
             <RolliGuideContent />
           ) : activeTab === "participants" || mode === "guessing" ? (
-            participantsPanel
+            <ParticipantsTabPanel
+              loading={rosterLoading}
+              error={rosterError}
+              participants={rosterParticipants}
+              participant={participant}
+              isFilmKeeper={isFilmKeeper}
+              onKick={handleKickRequest}
+            />
           ) : null}
         </div>
       </GuideModalShell>

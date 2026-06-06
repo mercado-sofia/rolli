@@ -158,19 +158,11 @@ function JoinPageContent() {
             step === 2 && !slugFromQuery ? handleBackToLinkStep : undefined
           }
           backLabel={step === 1 ? "Back to start" : "Back to link"}
-          title={
-            step === 1
-              ? "Enter the room"
-              : (hangoutTitle ?? "Your identity")
-          }
+          title={step === 1 ? "Enter the room" : "Your identity"}
           sublabel={
             step === 1
               ? "Paste your invitation link"
-              : hangoutTitle
-                ? hangoutInProgress
-                  ? "Hangout in progress"
-                  : "You're invited"
-                : "Set your anonymous identity"
+              : "Set your anonymous identity"
           }
         />
       </header>
