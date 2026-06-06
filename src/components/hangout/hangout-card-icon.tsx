@@ -9,6 +9,7 @@ type HangoutCardIconProps = {
   containerClassName?: string;
   iconClassName?: string;
   borderTone?: "default" | "pink" | "ink";
+  animatedBorder?: boolean;
 };
 
 export function HangoutCardIcon({
@@ -16,12 +17,14 @@ export function HangoutCardIcon({
   containerClassName,
   iconClassName,
   borderTone = "default",
+  animatedBorder = false,
 }: HangoutCardIconProps) {
   return (
     <div className="flex justify-center">
       <GradientIconContainer
         size="lg"
         borderTone={borderTone}
+        animatedBorder={animatedBorder}
         className={containerClassName}
       >
         <Icon

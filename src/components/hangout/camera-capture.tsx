@@ -15,10 +15,21 @@ import { createPortal } from "react-dom";
 import { LuCamera } from "react-icons/lu";
 
 import { AppBackButton } from "@/components/ui/app-back-button";
+import { useTouchPrimary } from "@/hooks/use-touch-primary";
+import { getCaptureOverlayHint } from "@/lib/hangout/camera-capture-hint";
 import {
   CAMERA_VIDEO_CONSTRAINTS,
   encodeVideoFrameToJpeg,
 } from "@/lib/hangout/camera-frame";
+import {
+  applyVideoTrackZoom,
+  buildZoomPresets,
+  getActiveZoomValue,
+  isZoomPresetActive,
+  readZoomCapabilities,
+  type ZoomPreset,
+  type ZoomRange,
+} from "@/lib/hangout/camera-zoom";
 import { captureMemory } from "@/lib/hangout/hangout-api";
 import { cn } from "@/lib/utils";
 import type { Participant } from "@/types/participant";
@@ -89,6 +100,8 @@ export function CameraCapture({
 }: CameraCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const videoTrackRef = useRef<MediaStreamTrack | null>(null);
+  const zoomRangeRef = useRef<ZoomRange | null>(null);
   const warmStreamPromiseRef = useRef<Promise<MediaStream> | null>(null);
   const flashTimeoutRef = useRef<number | null>(null);
   const serverPhotosTakenRef = useRef(photosTaken);
@@ -99,6 +112,10 @@ export function CameraCapture({
   const [error, setError] = useState<string | null>(null);
   const [flash, setFlash] = useState(false);
   const [pendingUploads, setPendingUploads] = useState(0);
+  const [zoomPresets, setZoomPresets] = useState<ZoomPreset[]>([]);
+  const [activeZoom, setActiveZoom] = useState<number | null>(null);
+  const [isApplyingZoom, setIsApplyingZoom] = useState(false);
+  const isTouchPrimary = useTouchPrimary();
   const mounted = useSyncExternalStore(
     subscribeToClientMount,
     getClientMountSnapshot,
@@ -116,10 +133,20 @@ export function CameraCapture({
     serverPhotosTakenRef.current = photosTaken;
   }, [photosTaken]);
 
+  const resetZoomState = useCallback(() => {
+    videoTrackRef.current = null;
+    zoomRangeRef.current = null;
+    setZoomPresets([]);
+    setActiveZoom(null);
+    setIsApplyingZoom(false);
+  }, []);
+
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
     warmStreamPromiseRef.current = null;
+    videoTrackRef.current = null;
+    zoomRangeRef.current = null;
 
     if (videoRef.current) {
       videoRef.current.srcObject = null;
@@ -128,9 +155,10 @@ export function CameraCapture({
 
   const closeCamera = useCallback(() => {
     stopCamera();
+    resetZoomState();
     setPhase("idle");
     setError(null);
-  }, [stopCamera]);
+  }, [resetZoomState, stopCamera]);
 
   const triggerFlash = useCallback(() => {
     setFlash(true);
@@ -197,8 +225,9 @@ export function CameraCapture({
   const openCamera = useCallback(() => {
     if (photosRemaining <= 0 || phase !== "idle") return;
     setError(null);
+    resetZoomState();
     setPhase("opening");
-  }, [photosRemaining, phase]);
+  }, [photosRemaining, phase, resetZoomState]);
 
   useLayoutEffect(() => {
     if (phase !== "opening") return;
@@ -224,11 +253,22 @@ export function CameraCapture({
           return;
         }
 
+        const track = stream.getVideoTracks()[0];
+        videoTrackRef.current = track ?? null;
+        const range = track ? readZoomCapabilities(track) : null;
+        zoomRangeRef.current = range;
+        const presets = range ? buildZoomPresets(range) : [];
+        setZoomPresets(presets);
+        setActiveZoom(
+          track && presets.length ? getActiveZoomValue(track, presets) : null,
+        );
+
         setPhase("ready");
       } catch (openError) {
         if (cancelled) return;
 
         stopCamera();
+        resetZoomState();
         setPhase("idle");
         const message =
           openError instanceof Error ? openError.message : "";
@@ -245,7 +285,28 @@ export function CameraCapture({
     return () => {
       cancelled = true;
     };
-  }, [ensureStream, phase, stopCamera]);
+  }, [ensureStream, phase, resetZoomState, stopCamera]);
+
+  const handleSelectZoom = useCallback(async (value: number) => {
+    const track = videoTrackRef.current;
+    const range = zoomRangeRef.current;
+    if (!track || !range) return;
+
+    setIsApplyingZoom(true);
+    try {
+      const applied = await applyVideoTrackZoom(track, value, range);
+      setActiveZoom(applied);
+    } catch {
+      // Zoom is optional; keep the current level on failure.
+    } finally {
+      setIsApplyingZoom(false);
+    }
+  }, []);
+
+  const helpText = getCaptureOverlayHint({
+    isTouchPrimary,
+    hasZoomControls: zoomPresets.length > 0,
+  });
 
   const applyOptimisticPhotosTaken = useCallback(() => {
     if (!participant) return;
@@ -327,6 +388,7 @@ export function CameraCapture({
       triggerFlash();
       onCaptured(data.participant);
       stopCamera();
+      resetZoomState();
       setPhase("idle");
     } catch (captureErr) {
       setPhase("ready");
@@ -346,6 +408,7 @@ export function CameraCapture({
     phase,
     photosTaken,
     sessionToken,
+    resetZoomState,
     stopCamera,
     triggerFlash,
   ]);
@@ -369,8 +432,13 @@ export function CameraCapture({
             isCapturing={phase === "capturing"}
             isOpening={phase === "opening"}
             pendingUploads={pendingUploads}
+            zoomPresets={zoomPresets}
+            activeZoom={activeZoom}
+            isApplyingZoom={isApplyingZoom}
+            helpText={helpText}
             onClose={closeCamera}
             onCapture={() => void takePhoto()}
+            onSelectZoom={(value) => void handleSelectZoom(value)}
           />,
           document.body,
         )
@@ -482,6 +550,52 @@ function CameraTriggerButton({
   );
 }
 
+function CameraZoomControls({
+  presets,
+  activeZoom,
+  disabled,
+  onSelectZoom,
+}: {
+  presets: ZoomPreset[];
+  activeZoom: number | null;
+  disabled?: boolean;
+  onSelectZoom: (value: number) => void;
+}) {
+  if (presets.length === 0) return null;
+
+  return (
+    <div
+      role="group"
+      aria-label="Zoom"
+      className="flex flex-wrap items-center justify-center gap-2"
+    >
+      {presets.map((preset) => {
+        const isActive = isZoomPresetActive(activeZoom, preset.value);
+
+        return (
+          <button
+            key={String(preset.value)}
+            type="button"
+            disabled={disabled}
+            aria-pressed={isActive}
+            aria-label={`${preset.label} zoom`}
+            onClick={() => onSelectZoom(preset.value)}
+            className={cn(
+              "inline-flex min-w-11 touch-manipulation items-center justify-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+              "disabled:cursor-not-allowed disabled:opacity-50",
+              isActive
+                ? "border-pink-highlight bg-pink/10 text-pink-accent"
+                : "border-container-border bg-white text-muted hover:border-lavender-deep/35 hover:text-ink",
+            )}
+          >
+            {preset.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 const ShutterButton = forwardRef(function ShutterButton(
   {
     disabled,
@@ -535,8 +649,13 @@ function CaptureOverlay({
   isCapturing,
   isOpening,
   pendingUploads,
+  zoomPresets,
+  activeZoom,
+  isApplyingZoom,
+  helpText,
   onClose,
   onCapture,
+  onSelectZoom,
 }: {
   videoRef: RefObject<HTMLVideoElement | null>;
   error: string | null;
@@ -544,14 +663,20 @@ function CaptureOverlay({
   isCapturing: boolean;
   isOpening: boolean;
   pendingUploads: number;
+  zoomPresets: ZoomPreset[];
+  activeZoom: number | null;
+  isApplyingZoom: boolean;
+  helpText: string;
   onClose: () => void;
   onCapture: () => void;
+  onSelectZoom: (value: number) => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const shutterRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const helpId = useId();
   const shutterDisabled = isOpening || isCapturing;
+  const zoomDisabled = isOpening || isCapturing || isApplyingZoom;
 
   useLayoutEffect(() => {
     previousFocusRef.current =
@@ -686,8 +811,14 @@ function CaptureOverlay({
               Saving {pendingUploads === 1 ? "photo" : `${pendingUploads} photos`}…
             </p>
           )}
+          <CameraZoomControls
+            presets={zoomPresets}
+            activeZoom={activeZoom}
+            disabled={zoomDisabled}
+            onSelectZoom={onSelectZoom}
+          />
           <p id={helpId} className="text-center text-xs text-muted">
-            Tap the shutter to capture · Use the back control or Esc to close
+            {helpText}
           </p>
           <ShutterButton
             ref={shutterRef}

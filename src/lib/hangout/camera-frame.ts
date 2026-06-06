@@ -1,7 +1,7 @@
-const DEFAULT_MAX_EDGE = 1600;
-const DEFAULT_JPEG_QUALITY = 0.85;
+const DEFAULT_MAX_EDGE = 1200;
+const DEFAULT_JPEG_QUALITY = 0.78;
 
-export function encodeVideoFrameToJpeg(
+export async function encodeVideoFrameToJpeg(
   video: HTMLVideoElement,
   maxEdge = DEFAULT_MAX_EDGE,
   quality = DEFAULT_JPEG_QUALITY,
@@ -18,19 +18,43 @@ export function encodeVideoFrameToJpeg(
   const width = Math.round(sourceWidth * scale);
   const height = Math.round(sourceHeight * scale);
 
-  const canvas = document.createElement("canvas");
+  const canvas:
+    | HTMLCanvasElement
+    | OffscreenCanvas =
+    typeof OffscreenCanvas !== "undefined"
+      ? new OffscreenCanvas(width, height)
+      : document.createElement("canvas");
+
   canvas.width = width;
   canvas.height = height;
 
-  const context = canvas.getContext("2d");
+  const context = (canvas as HTMLCanvasElement | OffscreenCanvas)
+    .getContext("2d") as CanvasRenderingContext2D | null;
   if (!context) {
     return Promise.reject(new Error("Could not capture frame"));
   }
 
-  context.drawImage(video, 0, 0, width, height);
+  if (typeof createImageBitmap !== "undefined") {
+    const bitmap = await createImageBitmap(video);
+    context.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close?.();
+  } else {
+    context.drawImage(video, 0, 0, width, height);
+  }
+
+  if (typeof (canvas as OffscreenCanvas).convertToBlob === "function") {
+    const blob = await (canvas as OffscreenCanvas).convertToBlob({
+      type: "image/jpeg",
+      quality,
+    });
+    if (!blob) {
+      throw new Error("Could not encode photo");
+    }
+    return blob;
+  }
 
   return new Promise((resolve, reject) => {
-    canvas.toBlob(
+    (canvas as HTMLCanvasElement).toBlob(
       (result) => {
         if (result) resolve(result);
         else reject(new Error("Could not encode photo"));

@@ -203,7 +203,7 @@ export default function WaitingRoomPage() {
               <Card border="neutral" className="text-center">
                 <HangoutCardIcon
                   icon={LuMoon}
-                  borderTone="ink"
+                  animatedBorder
                   containerClassName="md:h-14 md:w-14"
                   iconClassName="text-ink md:h-7 md:w-7"
                 />
