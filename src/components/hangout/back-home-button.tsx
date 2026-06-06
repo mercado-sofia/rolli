@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { BsHousesFill } from "react-icons/bs";
+import { PiHouseBold } from "react-icons/pi";
 import { TbDoorExit } from "react-icons/tb";
 
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ export function BackHomeButton({
       className={cn(className)}
       onClick={handleBackHome}
     >
-      <BsHousesFill className="h-4 w-4 shrink-0" aria-hidden />
+      <PiHouseBold className="h-4 w-4 shrink-0" aria-hidden />
       {label}
     </Button>
   );

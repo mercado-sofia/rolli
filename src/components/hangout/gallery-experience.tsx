@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { BiSave } from "react-icons/bi";
+import { PiDownloadBold } from "react-icons/pi";
 import { TbCashHeart } from "react-icons/tb";
 
 import { GalleryFolderCard } from "@/components/hangout/gallery-folder-card";
@@ -233,11 +233,16 @@ export function GalleryExperience({
   return (
     <div className="space-y-6">
       <Card border="neutral" className="text-center">
-        <p className="inline-flex items-center justify-center gap-2 text-sm text-muted">
-          <TbCashHeart className="h-4 w-4 shrink-0" aria-hidden />
-          {totalPhotos} {totalPhotos === 1 ? "memory" : "memories"} from{" "}
-          {perspectives.length}{" "}
-          {perspectives.length === 1 ? "perspective" : "perspectives"}
+        <p className="inline-flex items-center justify-center gap-3 text-sm">
+          <TbCashHeart className="h-4 w-4 shrink-0 text-pink-highlight" aria-hidden />
+          <span className="text-pink-highlight">{totalPhotos}</span>{" "}
+          <span className="text-muted">
+            {totalPhotos === 1 ? "memory" : "memories"} from
+          </span>{" "}
+          <span className="text-pink-highlight">{perspectives.length}</span>{" "}
+          <span className="text-muted">
+            {perspectives.length === 1 ? "perspective" : "perspectives"}
+          </span>
         </p>
       </Card>
 
@@ -273,7 +278,7 @@ export function GalleryExperience({
               )
             }
           >
-            <BiSave className="h-4 w-4 shrink-0" aria-hidden />
+            <PiDownloadBold className="h-4 w-4 shrink-0" aria-hidden />
             {downloading === "full-album"
               ? "Preparing zip…"
               : "Download full album (zip)"}
@@ -294,7 +299,7 @@ export function GalleryExperience({
                 )
               }
             >
-              <BiSave className="h-4 w-4 shrink-0" aria-hidden />
+              <PiDownloadBold className="h-4 w-4 shrink-0" aria-hidden />
               {downloading === `perspective-${selectedPerspective.participantId}`
                 ? "Preparing zip…"
                 : `Download ${selectedPerspective.nickname}'s folder (zip)`}
