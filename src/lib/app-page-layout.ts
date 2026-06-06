@@ -166,33 +166,6 @@ export const FIXED_VIEWPORT_BLEED_CLASS = cn(
   `supports-[height:100dvh]:min-h-[calc(100dvh+max(env(safe-area-inset-top,0px),${MOBILE_STATUS_BAR_BLEED})+max(env(safe-area-inset-bottom,0px),${MOBILE_HOME_INDICATOR_BLEED}))]`,
 );
 
-/** Header/footer above the developing overlay on mobile (title + CTAs stay readable). */
-export const DEVELOPING_FLOW_CHROME_CLASS = cn(
-  "relative z-40 bg-white",
-  // Parent shell adds safe-area top padding — bleed white into the status bar gap.
-  `before:pointer-events-none before:absolute before:-top-[max(${MOBILE_STATUS_BAR_BLEED},env(safe-area-inset-top,0px))] before:-left-[100vw] before:-right-[100vw] before:h-[max(${MOBILE_STATUS_BAR_BLEED},env(safe-area-inset-top,0px))] before:bg-white before:content-['']`,
-  "md:relative md:z-auto md:bg-transparent md:before:hidden",
-);
-
-/** Footer variant — bleed white into the home-indicator safe area. */
-export const DEVELOPING_FLOW_FOOTER_CHROME_CLASS = cn(
-  DEVELOPING_FLOW_CHROME_CLASS,
-  `after:pointer-events-none after:absolute after:-bottom-[max(${MOBILE_HOME_INDICATOR_BLEED},env(safe-area-inset-bottom,0px))] after:-left-[100vw] after:-right-[100vw] after:h-[max(${MOBILE_HOME_INDICATOR_BLEED},env(safe-area-inset-bottom,0px))] after:bg-white after:content-['']`,
-  "md:after:hidden",
-);
-
-/**
- * Full-screen white developing backdrop (mobile portal).
- * Top/bottom inset keeps centered content clear of page header and footer.
- */
-export const DEVELOPING_MOBILE_OVERLAY_CLASS = cn(
-  FIXED_VIEWPORT_BLEED_CLASS,
-  "z-30 flex flex-col bg-white md:hidden",
-  "justify-center",
-  "pt-[max(7.25rem,calc(env(safe-area-inset-top)+5.25rem))]",
-  "pb-[max(11rem,calc(env(safe-area-inset-bottom)+8.5rem))]",
-);
-
 /** White (#FFF) app container with 1px #FFEDF5 border */
 export const APP_CONTAINER_SURFACE = "border border-container-border bg-white";
 

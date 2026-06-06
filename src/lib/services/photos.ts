@@ -1,3 +1,4 @@
+import { HANGOUT_PHOTOS_BUCKET } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/client";
 import {
   mapParticipant,
@@ -5,8 +6,6 @@ import {
 } from "@/lib/supabase/mappers";
 import { parseRpcError } from "@/lib/services/rpc-error";
 import type { Participant } from "@/types/participant";
-
-const BUCKET = "hangout-photos";
 const PREPARE_TIMEOUT_MS = 10_000;
 const UPLOAD_TIMEOUT_MS = 30_000;
 const CAPTURE_TIMEOUT_MS = 10_000;
@@ -71,7 +70,7 @@ export async function captureMemory(
   };
 
   const { error: uploadError } = await withTimeout(
-    supabase.storage.from(BUCKET).upload(prepared.storage_path, input.file, {
+    supabase.storage.from(HANGOUT_PHOTOS_BUCKET).upload(prepared.storage_path, input.file, {
       contentType: prepared.content_type ?? "image/jpeg",
       upsert: false,
     }),
@@ -98,7 +97,7 @@ export async function captureMemory(
   const { data: captureData, error: captureError } = captureResult;
 
   if (captureError) {
-    await supabase.storage.from(BUCKET).remove([prepared.storage_path]);
+    await supabase.storage.from(HANGOUT_PHOTOS_BUCKET).remove([prepared.storage_path]);
     return { error: parseRpcError(captureError as Error) };
   }
 

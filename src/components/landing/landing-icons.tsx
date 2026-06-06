@@ -1,9 +1,6 @@
 import type { IconType } from "react-icons";
-import { TbCashHeart } from "react-icons/tb";
 import {
-  LuCamera,
   LuCake,
-  LuFilm,
   LuFlower2,
   LuIceCreamCone,
   LuMartini,
@@ -15,17 +12,11 @@ import {
 } from "react-icons/lu";
 
 import { cn } from "@/lib/utils";
-import type { GuideSlideIconKey, PolaroidIconKey } from "@/lib/constants";
+import type { PolaroidIconKey } from "@/lib/constants";
 
 /** Shared stroke weight for landing Lucide icons via react-icons */
 export const LANDING_ICON_CLASS =
   "stroke-[1.5] [stroke-linecap:round] [stroke-linejoin:round]";
-
-const GUIDE_ICON_MAP: Record<GuideSlideIconKey, IconType> = {
-  camera: LuCamera,
-  film: LuFilm,
-  cashHeart: TbCashHeart,
-};
 
 const POLAROID_ICON_MAP: Record<PolaroidIconKey, IconType> = {
   flower: LuFlower2,
@@ -47,23 +38,6 @@ export function LandingIcon({ icon: Icon, size = 24, className }: LandingIconPro
     <Icon
       size={size}
       className={cn(LANDING_ICON_CLASS, "text-lavender-deep", className)}
-      aria-hidden
-    />
-  );
-}
-
-type GuideSlideIconProps = {
-  iconKey: GuideSlideIconKey;
-  size?: number;
-};
-
-export function GuideSlideIcon({ iconKey, size = 48 }: GuideSlideIconProps) {
-  const Icon = GUIDE_ICON_MAP[iconKey];
-
-  return (
-    <Icon
-      size={size}
-      className={cn(LANDING_ICON_CLASS, "text-white")}
       aria-hidden
     />
   );

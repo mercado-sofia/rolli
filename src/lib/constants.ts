@@ -27,6 +27,9 @@ export const LANDING_SECTION_SCROLL_MT =
 export const APP_BASE_URL =
   process.env.NEXT_PUBLIC_APP_URL ?? "https://rolli.app";
 
+/** Supabase Storage bucket for hangout photos (must match `004_storage.sql`). */
+export const HANGOUT_PHOTOS_BUCKET = "hangout-photos";
+
 export const HANGOUT_LIMITS = {
   maxParticipants: 10,
   minToStart: 2,
@@ -66,8 +69,6 @@ export const GUIDE_STEPS = [
     tip: "Use the reveal as your group recap moment.",
   },
 ] as const;
-
-export type GuideSlideIconKey = (typeof GUIDE_STEPS)[number]["icon"];
 
 export type PolaroidIconKey =
   | "flower"
