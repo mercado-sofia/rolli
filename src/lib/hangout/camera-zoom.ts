@@ -94,6 +94,22 @@ export function buildZoomPresets(range: ZoomRange): ZoomPreset[] {
   return presets.sort((a, b) => a.value - b.value);
 }
 
+export function getDefaultZoomPreset(presets: ZoomPreset[]): ZoomPreset | null {
+  if (presets.length === 0) return null;
+
+  const labeledOneX = presets.find((preset) => preset.label === "1×");
+  if (labeledOneX) return labeledOneX;
+
+  const valueNearOne = presets.find(
+    (preset) => Math.abs(preset.value - 1) < ZOOM_VALUE_EPSILON,
+  );
+  if (valueNearOne) return valueNearOne;
+
+  return presets.reduce((nearest, preset) =>
+    Math.abs(preset.value - 1) < Math.abs(nearest.value - 1) ? preset : nearest,
+  );
+}
+
 export function getActiveZoomValue(
   track: MediaStreamTrack,
   presets: ZoomPreset[],
@@ -105,10 +121,20 @@ export function getActiveZoomValue(
   const raw =
     typeof current === "number" && Number.isFinite(current)
       ? current
-      : (presets.find((preset) => Math.abs(preset.value - 1) < ZOOM_VALUE_EPSILON)
-          ?.value ?? presets[0].value);
+      : (getDefaultZoomPreset(presets)?.value ?? 1);
 
   return snapToNearestPreset(raw, presets).value;
+}
+
+export async function resetVideoTrackToDefaultZoom(
+  track: MediaStreamTrack,
+  range: ZoomRange,
+  presets: ZoomPreset[],
+): Promise<number | null> {
+  const defaultPreset = getDefaultZoomPreset(presets);
+  if (!defaultPreset) return null;
+
+  return applyVideoTrackZoom(track, defaultPreset.value, range);
 }
 
 function snapToNearestPreset(value: number, presets: ZoomPreset[]): ZoomPreset {

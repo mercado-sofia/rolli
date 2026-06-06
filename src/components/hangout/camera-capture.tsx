@@ -22,9 +22,9 @@ import {
 import {
   applyVideoTrackZoom,
   buildZoomPresets,
-  getActiveZoomValue,
   isZoomPresetActive,
   readZoomCapabilities,
+  resetVideoTrackToDefaultZoom,
   type ZoomPreset,
   type ZoomRange,
 } from "@/lib/hangout/camera-zoom";
@@ -256,9 +256,27 @@ export function CameraCapture({
         zoomRangeRef.current = range;
         const presets = range ? buildZoomPresets(range) : [];
         setZoomPresets(presets);
-        setActiveZoom(
-          track && presets.length ? getActiveZoomValue(track, presets) : null,
-        );
+
+        if (track && range && presets.length > 0) {
+          try {
+            const applied = await resetVideoTrackToDefaultZoom(
+              track,
+              range,
+              presets,
+            );
+            if (!cancelled) {
+              setActiveZoom(applied);
+            }
+          } catch {
+            if (!cancelled) {
+              setActiveZoom(null);
+            }
+          }
+        } else {
+          setActiveZoom(null);
+        }
+
+        if (cancelled) return;
 
         setPhase("ready");
       } catch (openError) {
@@ -784,14 +802,13 @@ function CaptureOverlay({
 
         <div
           className={cn(
-            "relative z-10 flex min-h-0 flex-1 flex-col items-center px-4 pb-2",
-            "md:flex-none md:px-6 md:pb-4",
+            "relative z-10 flex min-h-0 flex-1 items-center justify-center px-4 py-2",
+            "md:px-6 md:py-4",
           )}
         >
           <div
             className={cn(
-              "relative mx-auto w-full max-w-full shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
-              "max-h-[min(62dvh,36rem)]",
+              "relative mx-auto h-full max-h-full w-auto max-w-full shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
             )}
             style={{ aspectRatio: CAMERA_ASPECT_RATIO }}
           >
