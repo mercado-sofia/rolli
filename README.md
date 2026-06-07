@@ -2,7 +2,7 @@
 
 **A disposable camera night with your friends — except nobody knows who took what until the hangout's over. Then you guess.**
 
-rolli is a little web hangout where everyone jumps into the same room, snaps photos under silly anonymous nicknames, and keeps every shot locked away until the night ends. When the memories finally develop, the real game begins: who was behind each perspective?
+rolli is a little web hangout where everyone joins into the same room, captures photos under anonymous nicknames, and keeps every shot locked away until the hangout ends. When the memories finally develop, the real game begins: who was behind each perspective?
 
 ---
 
