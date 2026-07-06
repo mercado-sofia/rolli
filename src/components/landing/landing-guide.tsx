@@ -110,19 +110,19 @@ export function LandingGuide() {
                       : "pointer-events-none translate-y-3 opacity-0"
                   }`}
                 >
-                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-pink-accent">
+                  <span className="text-base font-semibold text-pink-accent">
                     Step {i + 1}
                   </span>
 
-                  <p className="font-display text-base leading-snug text-ink">
+                  <p className="font-display text-xl leading-snug text-ink">
                     {step.heading}
                   </p>
 
-                  <p className="flex-1 text-xs leading-relaxed text-muted">
+                  <p className="mt-3 flex-1 text-base leading-relaxed text-ink">
                     {step.description}
                   </p>
 
-                  <p className="border-t border-pink-highlight/25 pt-3 text-xs italic leading-relaxed text-pink-accent">
+                  <p className="border-t border-pink-highlight/25 pt-3 text-sm italic leading-relaxed text-pink-accent">
                     {step.tip}
                   </p>
                 </div>
