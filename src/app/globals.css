@@ -138,10 +138,17 @@ body {
   overflow-x: hidden;
 }
 
+.landing-scrollbar {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--navbar-total-height);
+}
+
 @media (min-width: 768px) {
   .landing-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: var(--pink-highlight) var(--background);
+    scroll-padding-top: var(--navbar-total-height);
+    scroll-behavior: smooth;
   }
 
   html.landing-scrollbar,

@@ -15,18 +15,50 @@ function getNavbarOffset() {
   return header?.offsetHeight ?? 56;
 }
 
+function getScrollContainer() {
+  return document.getElementById("landing-scroll-container") as HTMLElement | null;
+}
+
 function scrollToSection(sectionId: string) {
   const target = document.getElementById(sectionId);
   if (!target) return;
 
-  const offset = getNavbarOffset();
-  const top =
-    target.getBoundingClientRect().top + window.scrollY - offset;
+  // Update URL hash
+  window.history.replaceState(null, "", `#${sectionId}`);
 
-  window.scrollTo({
-    top: Math.max(0, top),
-    behavior: "smooth",
-  });
+  const offset = getNavbarOffset();
+  const container = getScrollContainer();
+
+  if (container && container.scrollHeight > container.clientHeight) {
+    // Desktop: scroll the custom container
+    // Calculate target position from top of scrollable content
+    let element = target as HTMLElement | null;
+    let position = 0;
+
+    while (element && element !== container) {
+      position += element.offsetTop;
+      element = element.offsetParent as HTMLElement | null;
+    }
+
+    container.scrollTo({
+      top: Math.max(0, position - offset),
+      behavior: "smooth",
+    });
+  } else {
+    // Mobile: scroll the window
+    let element = target as HTMLElement | null;
+    let position = 0;
+
+    while (element) {
+      position += element.offsetTop;
+      element = element.offsetParent as HTMLElement | null;
+    }
+
+    window.scrollTo({
+      top: Math.max(0, position - offset),
+      behavior: "smooth",
+    });
+  }
 }
 
 export function LandingNavbar() {
@@ -35,12 +67,27 @@ export function LandingNavbar() {
 
   useEffect(() => {
     function onScroll() {
-      setIsScrolled(window.scrollY > 8);
+      const container = getScrollContainer();
+
+      if (container && container.scrollHeight > container.clientHeight) {
+        // Container is scrollable, check its scroll position
+        setIsScrolled(container.scrollTop > 8);
+      } else {
+        // Fallback to window scroll
+        setIsScrolled(window.scrollY > 8);
+      }
     }
 
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    const container = getScrollContainer();
+    if (container && container.scrollHeight > container.clientHeight) {
+      container.addEventListener("scroll", onScroll, { passive: true });
+      return () => container.removeEventListener("scroll", onScroll);
+    } else {
+      window.addEventListener("scroll", onScroll, { passive: true });
+      return () => window.removeEventListener("scroll", onScroll);
+    }
   }, []);
 
   useEffect(() => {
