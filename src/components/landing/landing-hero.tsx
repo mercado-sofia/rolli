@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { TbDeviceMobileCheck } from "react-icons/tb";
 
 import { MobileShell } from "@/components/layout/mobile-shell";
 import { Button } from "@/components/ui/button";
@@ -297,6 +298,11 @@ export function LandingHero() {
       </div>
       <ConfirmDialog
         open={showDesktopModal}
+        icon={
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-pink-accent/5 text-pink-accent">
+            <TbDeviceMobileCheck className="text-[2rem]" aria-hidden="true" />
+          </div>
+        }
         title="Start Hangout on mobile"
         description={
           <>
