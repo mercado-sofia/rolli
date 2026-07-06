@@ -13,11 +13,13 @@ import { Card } from "@/components/ui/card";
 import { APP_CHOICE_GRID_CLASS } from "@/lib/app-page-layout";
 import { SETUP_FLOW_TOTAL_STEPS, setupFlowSteps } from "@/lib/hangout/setup";
 import { cn } from "@/lib/utils";
+import { MobileOnlyAccessGate } from "@/components/mobile-only-access-gate";
 
 export default function StartPage() {
   return (
-    <SetupFlowShell>
-      <header className={SETUP_FLOW_HEADER_CLASS}>
+    <MobileOnlyAccessGate>
+      <SetupFlowShell>
+        <header className={SETUP_FLOW_HEADER_CLASS}>
         <SetupFlowHeader
           currentStep={setupFlowSteps.start}
           totalSteps={SETUP_FLOW_TOTAL_STEPS}
@@ -77,6 +79,7 @@ export default function StartPage() {
       </main>
 
       <SetupFlowFooter hint="Pick create or paste link — you'll be in the room in a moment." />
-    </SetupFlowShell>
+      </SetupFlowShell>
+    </MobileOnlyAccessGate>
   );
 }

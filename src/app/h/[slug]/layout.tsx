@@ -9,6 +9,7 @@ import {
 } from "@/contexts/hangout-display-context";
 import { useInHangoutSession } from "@/hooks/use-in-hangout-session";
 import { shouldPlayRevealAmbientMusic } from "@/lib/hangout/reveal-audio";
+import { MobileOnlyAccessGate } from "@/components/mobile-only-access-gate";
 
 function HangoutSlugLayoutContent({ children }: { children: React.ReactNode }) {
   const params = useParams<{ slug: string }>();
@@ -41,8 +42,10 @@ export default function HangoutSlugLayout({
   const slug = params.slug;
 
   return (
-    <HangoutDisplayProvider slug={slug}>
-      <HangoutSlugLayoutContent>{children}</HangoutSlugLayoutContent>
-    </HangoutDisplayProvider>
+    <MobileOnlyAccessGate>
+      <HangoutDisplayProvider slug={slug}>
+        <HangoutSlugLayoutContent>{children}</HangoutSlugLayoutContent>
+      </HangoutDisplayProvider>
+    </MobileOnlyAccessGate>
   );
 }

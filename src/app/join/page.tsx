@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { MobileLoadingSpinner } from "@/components/ui/mobile-loading-spinner";
 import { APP_PRIMARY_BUTTON_CLASS, APP_SETUP_FORM_MAX_WIDTH } from "@/lib/app-page-layout";
 import { fetchHangoutBySlug } from "@/lib/hangout/hangout-api";
+import { MobileOnlyAccessGate } from "@/components/mobile-only-access-gate";
 import {
   getLateJoinHint,
   isHangoutInProgress,
@@ -226,8 +227,10 @@ function JoinPageContent() {
 
 export default function JoinPage() {
   return (
-    <Suspense fallback={<JoinPageSkeleton />}>
-      <JoinPageContent />
-    </Suspense>
+    <MobileOnlyAccessGate>
+      <Suspense fallback={<JoinPageSkeleton />}>
+        <JoinPageContent />
+      </Suspense>
+    </MobileOnlyAccessGate>
   );
 }

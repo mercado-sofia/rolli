@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 import { MobileShell } from "@/components/layout/mobile-shell";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { LANDING_SECTION_SCROLL_MT, PUBLIC_ASSETS } from "@/lib/constants";
 import { PolaroidCard, polaroids } from "@/components/landing/polaroid-card";
 
@@ -191,6 +193,8 @@ function HeroBackgroundEllipses({ mobile = false }: { mobile?: boolean }) {
 }
 
 export function LandingHero() {
+  const [showDesktopModal, setShowDesktopModal] = useState(false);
+
   return (
     <section id="hero" className={`${LANDING_SECTION_SCROLL_MT} overflow-x-hidden`}>
       {/* Mobile hero — full viewport height; content clears fixed navbar inside */}
@@ -278,9 +282,10 @@ export function LandingHero() {
               </div>
 
               <Button
-                href="/start"
+                type="button"
                 variant="gradient"
                 className="mt-3 h-13.5 w-auto min-w-55 px-10 text-[15px] shadow-glow lg:mt-4"
+                onClick={() => setShowDesktopModal(true)}
               >
                 Start a hangout
               </Button>
@@ -290,6 +295,23 @@ export function LandingHero() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={showDesktopModal}
+        title="Start Hangout on mobile"
+        description={
+          <>
+            Rolli is optimized for mobile devices. To start a hangout, open this page on your phone or tablet.
+            <br />
+            <br />
+            You can also copy the page link and open it on your mobile device.
+          </>
+        }
+        confirmLabel="Got it"
+        cancelLabel="Close"
+        onConfirm={() => setShowDesktopModal(false)}
+        onCancel={() => setShowDesktopModal(false)}
+        showCancelButton={false}
+      />
     </section>
   );
 }

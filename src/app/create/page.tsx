@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { SETUP_FLOW_TOTAL_STEPS, setupFlowSteps } from "@/lib/hangout/setup";
 import { usePreventAutoKeyboard } from "@/hooks/use-prevent-auto-keyboard";
 import { useSessionStore } from "@/store/session-store";
+import { MobileOnlyAccessGate } from "@/components/mobile-only-access-gate";
 
 const schema = z.object({
   title: z.string().min(3, "Give your hangout a title"),
@@ -110,52 +111,54 @@ export default function CreatePage() {
 
   if (created) {
     return (
-      <SetupFlowShell>
-        <header className={SETUP_FLOW_HEADER_CLASS}>
-          <SetupFlowHeader
-            currentStep={setupFlowSteps.createLinkReady}
-            totalSteps={SETUP_FLOW_TOTAL_STEPS}
-            onBack={() => {
-              setCreated(null);
-              setStep(2);
-            }}
-            backLabel="Back to identity"
-            title="Ready to roll!"
-            sublabel="Share with your friends"
-          />
-        </header>
+      <MobileOnlyAccessGate>
+        <SetupFlowShell>
+          <header className={SETUP_FLOW_HEADER_CLASS}>
+            <SetupFlowHeader
+              currentStep={setupFlowSteps.createLinkReady}
+              totalSteps={SETUP_FLOW_TOTAL_STEPS}
+              onBack={() => {
+                setCreated(null);
+                setStep(2);
+              }}
+              backLabel="Back to identity"
+              title="Ready to roll!"
+              sublabel="Share with your friends"
+            />
+          </header>
 
-        <main
-          className={cn(
-            SETUP_FLOW_MAIN_CLASS,
-            SETUP_FLOW_MAIN_CENTER_CLASS,
-          )}
-        >
-          <div
+          <main
             className={cn(
-              SETUP_FLOW_MAIN_INNER_CLASS,
-              "w-full",
-              APP_SETUP_FORM_MAX_WIDTH,
+              SETUP_FLOW_MAIN_CLASS,
+              SETUP_FLOW_MAIN_CENTER_CLASS,
             )}
           >
-            <InviteLinkCard
-              inviteUrl={created.inviteUrl}
-              hangoutTitle={created.title}
-            />
-          </div>
-        </main>
+            <div
+              className={cn(
+                SETUP_FLOW_MAIN_INNER_CLASS,
+                "w-full",
+                APP_SETUP_FORM_MAX_WIDTH,
+              )}
+            >
+              <InviteLinkCard
+                inviteUrl={created.inviteUrl}
+                hangoutTitle={created.title}
+              />
+            </div>
+          </main>
 
-        <SetupFlowFooter hint="Share the link with friends, then enter when you're ready.">
-          <Button
-            type="button"
-            onClick={enterWaitingRoom}
-            disabled={enteringWaitingRoom}
-            className={APP_PRIMARY_BUTTON_CLASS}
-          >
-            {enteringWaitingRoom ? "Entering waiting room…" : "Enter waiting room"}
-          </Button>
-        </SetupFlowFooter>
-      </SetupFlowShell>
+          <SetupFlowFooter hint="Share the link with friends, then enter when you're ready.">
+            <Button
+              type="button"
+              onClick={enterWaitingRoom}
+              disabled={enteringWaitingRoom}
+              className={APP_PRIMARY_BUTTON_CLASS}
+            >
+              {enteringWaitingRoom ? "Entering waiting room…" : "Enter waiting room"}
+            </Button>
+          </SetupFlowFooter>
+        </SetupFlowShell>
+      </MobileOnlyAccessGate>
     );
   }
 
@@ -163,8 +166,9 @@ export default function CreatePage() {
     step === 1 ? setupFlowSteps.createTitle : setupFlowSteps.createIdentity;
 
   return (
-    <SetupFlowShell>
-      <header className={SETUP_FLOW_HEADER_CLASS}>
+    <MobileOnlyAccessGate>
+      <SetupFlowShell>
+        <header className={SETUP_FLOW_HEADER_CLASS}>
         <SetupFlowHeader
           currentStep={currentStep}
           totalSteps={SETUP_FLOW_TOTAL_STEPS}
@@ -263,5 +267,6 @@ export default function CreatePage() {
         )}
       </SetupFlowFooter>
     </SetupFlowShell>
+  </MobileOnlyAccessGate>
   );
 }
