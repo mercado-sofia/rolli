@@ -1,12 +1,12 @@
 # rolli
 
-**A disposable camera night with your friends — except nobody knows who took what until the hangout's over. Then you guess.**
+**A disposable camera with your friends — except nobody knows who took what until the hangout's over. Then you guess.**
 
 rolli is a little web hangout where everyone joins into the same room, captures photos under anonymous nicknames, and keeps every shot locked away until the hangout ends. When the memories finally develop, the real game begins: who was behind each perspective?
 
 ---
 
-## So… what is rolli?
+## what is rolli?
 
 During a hangout, everyone contributes photos like a shared disposable camera — but with a catch:
 
