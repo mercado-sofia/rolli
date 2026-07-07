@@ -82,7 +82,7 @@ export default function HangoutSharePage() {
         </div>
       </main>
 
-      <SetupFlowFooter hint="Copy the link and send it to friends before you start.">
+      <SetupFlowFooter>
         <Button
           type="button"
           onClick={() => router.push(waitingPath)}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { LuFilm } from "react-icons/lu";
 
 import { HangoutCardIcon } from "@/components/hangout/hangout-card-icon";
@@ -8,9 +8,6 @@ import { RevealCountdownOverlay } from "@/components/hangout/reveal-countdown-ov
 import { Button } from "@/components/ui/button";
 import { useRevealCountdown } from "@/hooks/use-reveal-countdown";
 import type { useRevealPrepare } from "@/hooks/use-reveal-prepare";
-import {
-  APP_PRIMARY_BUTTON_CLASS,
-} from "@/lib/app-page-layout";
 import { signalRevealPending, startReveal } from "@/lib/hangout/hangout-api";
 import {
   getRevealCountdownMs,
@@ -143,7 +140,6 @@ export function DevelopingPrepareOverlay({
   isFilmKeeper,
   prepare,
   onHangoutUpdate,
-  onFooterChange,
 }: DevelopingPrepareOverlayProps) {
   const [starting, setStarting] = useState(false);
   const [signaling, setSignaling] = useState(false);
@@ -223,46 +219,6 @@ export function DevelopingPrepareOverlay({
     hangoutId,
     onHangoutUpdate,
     sessionToken,
-  ]);
-
-  const guestFooterHint = revealStarting
-    ? "Reveal starting…"
-    : "Waiting for the Film Keeper to start the reveal…";
-
-  useEffect(() => {
-    onFooterChange({
-      hint: isFilmKeeper ? undefined : guestFooterHint,
-      children: isFilmKeeper ? (
-        <>
-          {startError && (
-            <p className="text-center text-sm text-pink">{startError}</p>
-          )}
-          <Button
-            type="button"
-            disabled={starting || signaling || countdownActive}
-            className={APP_PRIMARY_BUTTON_CLASS}
-            onClick={() => void handleBeginCountdown()}
-          >
-            {countdownActive
-              ? "Revealing…"
-              : signaling
-                ? "Starting…"
-                : starting
-                  ? "Opening reveal…"
-                  : "Start reveal"}
-          </Button>
-        </>
-      ) : null,
-    });
-  }, [
-    countdownActive,
-    guestFooterHint,
-    handleBeginCountdown,
-    isFilmKeeper,
-    onFooterChange,
-    signaling,
-    startError,
-    starting,
   ]);
 
   return (

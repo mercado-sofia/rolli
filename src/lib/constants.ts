@@ -42,6 +42,7 @@ export const HANGOUT_LIMITS = {
 } as const;
 
 export const NICKNAME_MIN_LENGTH = 2;
+export const NICKNAME_MAX_LENGTH = 12;
 
 export const GUIDE_STEPS = [
   {

@@ -22,7 +22,7 @@ import { SetupFormCard } from "@/components/ui/setup-form-card";
 import { createHangoutWithKeeper } from "@/lib/hangout/hangout-api";
 import { buildInviteUrl } from "@/lib/hangout/join";
 import { APP_PRIMARY_BUTTON_CLASS, APP_SETUP_FORM_MAX_WIDTH } from "@/lib/app-page-layout";
-import { NICKNAME_MIN_LENGTH } from "@/lib/constants";
+import { NICKNAME_MAX_LENGTH, NICKNAME_MIN_LENGTH } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { SETUP_FLOW_TOTAL_STEPS, setupFlowSteps } from "@/lib/hangout/setup";
 import { usePreventAutoKeyboard } from "@/hooks/use-prevent-auto-keyboard";
@@ -37,6 +37,10 @@ const schema = z.object({
     .min(
       NICKNAME_MIN_LENGTH,
       `Nickname must be at least ${NICKNAME_MIN_LENGTH} characters`,
+    )
+    .max(
+      NICKNAME_MAX_LENGTH,
+      `Nickname must be at most ${NICKNAME_MAX_LENGTH} characters`,
     ),
   realName: z.string().min(2, "Enter your real name (hidden until reveal)"),
 });
@@ -147,7 +151,7 @@ export default function CreatePage() {
             </div>
           </main>
 
-          <SetupFlowFooter hint="Share the link with friends, then enter when you're ready.">
+          <SetupFlowFooter>
             <Button
               type="button"
               onClick={enterWaitingRoom}
@@ -217,6 +221,7 @@ export default function CreatePage() {
                     placeholder="Enter nickname here"
                     error={errors.nickname?.message}
                     autoComplete="off"
+                    maxLength={NICKNAME_MAX_LENGTH}
                     {...register("nickname")}
                   />
                   <Field

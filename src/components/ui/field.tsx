@@ -22,7 +22,7 @@ export function Field({ label, error, hint, id, className, ...props }: FieldProp
         suppressHydrationWarning
         {...props}
         className={cn(
-          "h-[52px] w-full rounded-2xl border border-black/8 bg-[#FAFAFA] px-4",
+          "h-13 w-full rounded-2xl border border-black/8 bg-[#FAFAFA] px-4",
           "text-base text-ink placeholder:text-muted/60",
           "transition-[border-color,box-shadow,background-color] duration-200",
           "outline-none focus:border-pink-highlight/40 focus:bg-white focus:ring-4 focus:ring-pink-highlight/10",

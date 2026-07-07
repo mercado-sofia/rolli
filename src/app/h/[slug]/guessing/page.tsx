@@ -184,11 +184,7 @@ export default function GuessingPage() {
     footer.children
   );
 
-  const pageFooter = (
-    <SetupFlowFooter hint={footer.showGalleryButton ? undefined : footer.hint}>
-      {footerActions}
-    </SetupFlowFooter>
-  );
+  const pageFooter = <SetupFlowFooter>{footerActions}</SetupFlowFooter>;
 
   return (
     <HangoutPageLoadGate

@@ -642,7 +642,7 @@ const ShutterButton = forwardRef(function ShutterButton(
       aria-busy={isBusy}
       aria-label={statusLabel}
       className={cn(
-        "relative flex h-20 w-20 items-center justify-center rounded-full",
+        "relative mt-4 flex h-20 w-20 items-center justify-center rounded-full md:mt-6",
         "border-2 bg-white shadow-glow transition-all",
         "disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100",
         isBusy
@@ -808,7 +808,7 @@ function CaptureOverlay({
         >
           <div
             className={cn(
-              "relative mx-auto min-h-0 w-auto max-w-full flex-1 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
+              "relative mx-auto aspect-3/4 w-full max-w-[min(100%,420px)] max-h-[min(70dvh,560px)] shrink-0 overflow-hidden rounded-3xl border border-container-border bg-ink shadow-soft",
             )}
             style={{ aspectRatio: CAMERA_ASPECT_RATIO }}
           >
